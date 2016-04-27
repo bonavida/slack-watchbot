@@ -1,7 +1,8 @@
-var express = require('express');
-var bodyParser  = require("body-parser");
+var express        = require('express');
+var bodyParser     = require("body-parser");
 var methodOverride = require("method-override");
-var mongoose = require('mongoose');
+var mongoose       = require('mongoose');
+var config         = require('./config/database');
 
 var app = express();
 
@@ -31,4 +32,11 @@ app.use(function(err, req, res, next) {
     res.sendStatus(500);
 });
 
-app.listen(process.env.PORT);
+mongoose.connect('mongodb://localhost/watchbot', function(err, res) {
+    if(err) {
+        console.log('ERROR: connecting to Database. ' + err);
+    }
+    app.listen(process.env.PORT, function() {
+        console.log("Node server running on http://localhost:80");
+    });
+});
