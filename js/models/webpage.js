@@ -6,9 +6,9 @@ var webpageSchema = new Schema({
     url : { type: String, unique: true },
     dateAdded : Date,
     user : String,
-    indicencies : {
+    indicencies : [{
         incidencyDate : Date
-    }
+    }]
 });
 
 /** Cada vez que se crea una nueva webpage

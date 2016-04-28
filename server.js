@@ -37,6 +37,6 @@ mongoose.connect('mongodb://localhost/watchbot', function(err, res) {
         console.log('ERROR: connecting to Database. ' + err);
     }
     app.listen(process.env.PORT, function() {
-        console.log("Node server running on http://localhost:80");
+        console.log("Node server running on http://localhost:" + process.env.PORT);
     });
 });
