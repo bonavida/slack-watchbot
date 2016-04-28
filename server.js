@@ -20,7 +20,8 @@ router.get('/', function(req, res) {
     res.send('Watchbot is working and doing its magic.');
 });
 
-app.use(router);  //TODO: Eliminar esta linea
+//app.use(router);  //TODO: Eliminar esta linea
+require('./js/routers/webpages')(router);
 app.use('/api', router);
 
 app.use(function(req, res, next) {
@@ -33,7 +34,7 @@ app.use(function(err, req, res, next) {
 });
 
 mongoose.connect('mongodb://localhost/watchbot', function(err, res) {
-    if(err) {
+    if (err) {
         console.log('ERROR: connecting to Database. ' + err);
     }
     app.listen(process.env.PORT, function() {
