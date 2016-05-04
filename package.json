@@ -17,6 +17,7 @@
     "method-override": "^2.3.5",
     "mongoose": "^4.4.13",
     "net-ping": "^1.2.0",
+    "request": "^2.72.0",
     "slackbots": "^0.5.1"
   },
   "devDependencies": {
