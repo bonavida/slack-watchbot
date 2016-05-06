@@ -23,7 +23,7 @@ router.get('/', function(req, res) {
 });
 
 app.use(router);  //TODO: Eliminar esta linea
-require('./js/routers/webpages')(router);
+require('./js/routes/webpages')(router);
 app.use('/api', router);
 
 app.use(function(req, res, next) {
