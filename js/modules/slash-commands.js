@@ -1,4 +1,8 @@
 var Webpage  = require('../models/webpage');
+var dotenv   = require('dotenv');
+
+/** Carga variables de entorno desde un fichero .env al process.env */
+dotenv.load();
 
 /**
  * Método para informar en el canal de Slack, ya sea para ofrecer ayuda
@@ -33,7 +37,7 @@ var data = function(req, res, next) {
             if (!webpage) {
                 next();
             }
-            res.json(webpage);
+            res.json({token: process.env.WATCHBOT_TOKEN});
             //res.json({success: true, msg: 'Successful created new user.'});
         } else {
             res.send(500, err.message);

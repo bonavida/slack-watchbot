@@ -2,7 +2,9 @@ var sc = require('../modules/slash-commands');
 
 module.exports = function(router) {
 
-    router.get('/webpages', sc.info)
-          .post('/webpages', sc.data);
+    /** HTTP POST
+     * Slack funciona con llamadas POST
+     */
+    router.post('/webpages', sc.data);
 
 };
