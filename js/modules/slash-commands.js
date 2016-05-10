@@ -27,7 +27,7 @@ var info = function(req, res, next) {
  * Método para crear o eliminar una página web en la aplicación desde Slack
  */
 var data = function(req, res, next) {
-
+    res.json(req);
     /**
     var webpage = new Webpage({
         name : req.body.name,
