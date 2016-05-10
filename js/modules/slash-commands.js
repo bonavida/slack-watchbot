@@ -37,13 +37,13 @@ var info = function(req, res, next) {
  */
 var data = function(req, res, next) {
     request({
+        uri: 'https://hooks.slack.com/services/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',
+        method: 'POST',
         headers: {
             "Content-Type": "application/json"
         },
-        uri: 'https://hooks.slack.com/services/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',
-        method: 'POST',
-        body: {
-            text: "This is a line of text.\nAnd this is another one."
+        form: {
+            'text': 'This is a line of text.\nAnd this is another one.'
         }}, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             // Print out the response body
