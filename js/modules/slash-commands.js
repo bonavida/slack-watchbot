@@ -5,8 +5,9 @@ var request  = require('request');
 /** Carga variables de entorno desde un fichero .env al process.env */
 dotenv.load();
 
-var data = {
-    url: 'https://hooks.slack.com/services/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',
+var opts = {
+    uri: 'https://hooks.slack.com/services/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',
+    method: 'POST',
     form: {
         text: "This is a line of text.\nAnd this is another one."
     }
@@ -35,7 +36,7 @@ var info = function(req, res, next) {
  * Método para crear o eliminar una página web en la aplicación desde Slack
  */
 var data = function(req, res, next) {
-    request.post(data, function (error, response, body) {
+    request(opts, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             // Print out the response body
             console.log(body);
