@@ -33,7 +33,7 @@ var data = function(req, res) {
     slack.send({
         text: "Hello from the other side!"
     });
-    res.sendStatus(200);
+    res.end();
     /**
     var webpage = new Webpage({
         name : req.body.name,
