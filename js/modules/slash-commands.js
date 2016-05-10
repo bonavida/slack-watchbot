@@ -1,17 +1,11 @@
 var Webpage  = require('../models/webpage');
 var dotenv   = require('dotenv');
-var request  = require('request');
+var slackAPI  = require('node-slack');
 
 /** Carga variables de entorno desde un fichero .env al process.env */
 dotenv.load();
 
-var opts = {
-    uri: 'https://hooks.slack.com/services/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',
-    method: 'POST',
-    form: {
-        text: "This is a line of text.\nAnd this is another one."
-    }
-};
+var slack = new SlackAPI('https://hooks.slack.com/services/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');
 
 /**
  * Método para informar en el canal de Slack, ya sea para ofrecer ayuda
@@ -36,19 +30,8 @@ var info = function(req, res, next) {
  * Método para crear o eliminar una página web en la aplicación desde Slack
  */
 var data = function(req, res, next) {
-    request({
-        uri: 'https://hooks.slack.com/services/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',
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json"
-        },
-        form: {
-            'text': 'This is a line of text.\nAnd this is another one.'
-        }}, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            // Print out the response body
-            console.log(body);
-        }
+    slack.send({
+        text: "Hello from the other side!"
     });
     /**
     var webpage = new Webpage({
