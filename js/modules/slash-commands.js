@@ -1,8 +1,8 @@
 var Webpage  = require('../models/webpage');
-var slack    = require('../bot/botkit');
 var dotenv   = require('dotenv');
 
-slack.connect();
+/** Carga variables de entorno desde un fichero .env al process.env */
+dotenv.load();
 
 /**
  * Método para informar en el canal de Slack, ya sea para ofrecer ayuda
@@ -27,8 +27,6 @@ var info = function(req, res, next) {
  * Método para crear o eliminar una página web en la aplicación desde Slack
  */
 var data = function(req, res, next) {
-    res.json(req);
-    /**
     var webpage = new Webpage({
         name : req.body.name,
         url : req.body.url,
@@ -39,7 +37,6 @@ var data = function(req, res, next) {
             if (!webpage) {
                 next();
             }
-
             res.json({token: process.env.WATCHBOT_TOKEN});
             //res.json({success: true, msg: 'Successful created new user.'});
         } else {
@@ -47,7 +44,6 @@ var data = function(req, res, next) {
             //return res.json({success: false, msg: 'Username or e-mail already exists.'});
         }
     });
-    */
 };
 
 module.exports = {
