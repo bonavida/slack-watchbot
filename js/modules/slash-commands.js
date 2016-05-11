@@ -1,5 +1,6 @@
-var Webpage = require('../models/webpage');
-var cron    = require('./cron-watch');
+var Webpage        = require('../models/webpage');
+var WebpageService = require('../services/webpage-service');
+var cron           = require('./cron-watch');
 
 
 /**
@@ -39,7 +40,10 @@ var data = function(req, res) {
             text:"Esto es una línea\nY ésta es otra"
         });
     } else {
-        res.end();
+        res.json({
+            response_type: "ephemeral",
+            text:"Comando no identificado. Escribe /watch help para más información."
+        });
     }
 
     //TODO res.end();

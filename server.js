@@ -8,12 +8,15 @@ var port           = process.env.PORT;
 
 var app = express();
 
+
 /** Para poder parsear JSON */
 app.use(bodyParser.urlencoded({ extended : false }));
 app.use(bodyParser.json());
 
+
 /** Para implementar y personalizar metodos HTTP */
 app.use(methodOverride());
+
 
 /** Para crear la API Rest */
 var router = express.Router();
@@ -35,22 +38,6 @@ app.use(function(err, req, res, next) {
     res.sendStatus(500);
 });
 
-// request('https://eforce.elkno.com/api', function (error, res, body) {
-//     // Website is up
-//     if (!error && res.statusCode === 200) {
-//         console.log("UP");
-//     }
-//
-//     // No error but website not ok
-//     else if (!error) {
-//         console.log("DOWN: " + res.statusCode);
-//     }
-//
-//     // Loading error
-//     else {
-//         console.log("DOWN");
-//     }
-// });
 
 mongoose.connect(config.database, function(err, res) {
     if (err) {

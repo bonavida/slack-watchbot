@@ -1,4 +1,5 @@
 var cron     = require('cron');
+var request  = require('request');
 var dotenv   = require('dotenv');
 var slackAPI = require('node-slack');
 
@@ -16,6 +17,24 @@ var cronJob = cron.job("*/10 * * * * *", function() {
     //TODO
     slack.send({text:"Hello"});
 });
+
+
+// request('https://eforce.elkno.com/api', function (error, res, body) {
+//     // Website is up
+//     if (!error && res.statusCode === 200) {
+//         console.log("UP");
+//     }
+//
+//     // No error but website not ok
+//     else if (!error) {
+//         console.log("DOWN: " + res.statusCode);
+//     }
+//
+//     // Loading error
+//     else {
+//         console.log("DOWN");
+//     }
+// });
 
 
 /** MÉTODOS */
