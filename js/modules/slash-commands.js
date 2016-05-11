@@ -32,7 +32,7 @@ var cronJob = cron.job("*/10 * * * * *", function(){
     slack.send({text:"Hello"});
 });
 
-cronJob.start();
+//cronJob.start();
 
 /**
  * Método para crear o eliminar una página web en la aplicación desde Slack
