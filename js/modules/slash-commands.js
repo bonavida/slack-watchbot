@@ -27,10 +27,10 @@ var info = function(req, res, next) {
     });
 };
 
-var cronJob = cron.job("*/10 * * * * *", function(){
-    // perform operation e.g. GET request http.get() etc.
-    slack.send({text:"Hello"});
-});
+// var cronJob = cron.job("*/10 * * * * *", function(){
+//     // perform operation e.g. GET request http.get() etc.
+//     slack.send({text:"Hello"});
+// });
 
 //cronJob.start();
 
