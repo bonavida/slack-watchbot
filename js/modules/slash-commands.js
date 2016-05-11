@@ -5,7 +5,8 @@ var slackAPI  = require('node-slack');
 /** Carga variables de entorno desde un fichero .env al process.env */
 dotenv.load();
 
-var slack = new slackAPI('https://hooks.slack.com/services/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');
+/** Carga la API de Slack con el token asociado al Incoming Webhooks de la cuenta de Slack */
+var slack = new slackAPI(process.env.WEBHOOK);
 
 /**
  * Método para informar en el canal de Slack, ya sea para ofrecer ayuda
