@@ -25,7 +25,7 @@ var info = function(req, res, next) {
  * Método para crear o eliminar una página web en la aplicación desde Slack
  */
 var data = function(req, res) {
-
+    var text = req.body.text.split(" ");
     // if (req.body.text === "start") {
     //     cron.start();
     // }
@@ -34,16 +34,48 @@ var data = function(req, res) {
     //     cron.stop();
     // }
 
-    if (req.body.text === "help") {
-        res.json({
-            response_type: "ephemeral",
-            text:"Esto es una línea\nY ésta es otra"
-        });
+    switch (text[0]) {
+
+        case "help":
+            res.json({
+                response_type: "ephemeral",
+                text:"Esto es una línea\nY ésta es otra"
+            });
+            break;
+
+        case "add":
+            var url = text[-1];
+            text.pop();
+            text.shift();
+            var name = text.join(" ");
+            var webpage = {
+                url: url,
+                name: name,
+                user: req.body.user_name
+            };
+            var status = WebPageService.add(webpage);
+            if (status.success) {
+                res.json({
+                    response_type: "ephemeral",
+                    text:"Página web añadida con éxito"
+                });
+            } else {
+                //TODO
+            }
+            break;
+
+        default:
+            res.json({
+                response_type: "ephemeral",
+                text:"Comando no identificado. Escribe /watch help para más información."
+            });
+
+    }
+
+    if (text[0] === "help") {
+
     } else {
-        res.json({
-            response_type: "ephemeral",
-            text:"Comando no identificado. Escribe /watch help para más información."
-        });
+
     }
 
     //TODO res.end();
