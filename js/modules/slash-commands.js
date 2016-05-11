@@ -25,18 +25,22 @@ var info = function(req, res, next) {
  */
 var data = function(req, res) {
 
-    if (req.body.text === "start") {
-        cron.start();
-    }
+    // if (req.body.text === "start") {
+    //     cron.start();
+    // }
+    //
+    // if (req.body.text === "stop") {
+    //     cron.stop();
+    // }
 
-    if (req.body.text === "stop") {
-        cron.stop();
+    if (req.body.text === "help") {
+        res.json({
+            response_type: "ephemeral",
+            text:"Esto es una línea\nY ésta es otra"
+        });
+    } else {
+        res.end();
     }
-
-    res.json({
-        response_type: "in_channel",
-        text:"Hola de nuevo."
-    });
 
     //TODO res.end();
 
