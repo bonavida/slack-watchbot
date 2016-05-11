@@ -1,13 +1,6 @@
-var Webpage  = require('../models/webpage');
-var dotenv   = require('dotenv');
-var slackAPI = require('node-slack');
-var cron     = require('./cron-watch');
+var Webpage = require('../models/webpage');
+var cron    = require('./cron-watch');
 
-/** Carga variables de entorno desde un fichero .env al process.env */
-dotenv.load();
-
-/** Carga la API de Slack con la URL asociada al Incoming Webhooks de la cuenta de Slack del equipo */
-var slack = new slackAPI(process.env.WEBHOOK);
 
 /**
  * Método para informar en el canal de Slack, ya sea para ofrecer ayuda
@@ -27,21 +20,11 @@ var info = function(req, res, next) {
     });
 };
 
-// var cronJob = cron.job("*/10 * * * * *", function(){
-//     // perform operation e.g. GET request http.get() etc.
-//     slack.send({text:"Hello"});
-// });
-
-//cronJob.start();
-
 /**
  * Método para crear o eliminar una página web en la aplicación desde Slack
  */
 var data = function(req, res) {
-    //slack.send({
-    //    text: "Hello from the other side!"
-    //});
-    //res.end();
+
     if (req.body.text === "start") {
         cron.start();
     }
@@ -54,6 +37,9 @@ var data = function(req, res) {
         response_type: "in_channel",
         text:"Hola de nuevo."
     });
+
+    //TODO res.end();
+
     /**
     var webpage = new Webpage({
         name : req.body.name,
