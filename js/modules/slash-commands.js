@@ -26,6 +26,7 @@ var info = function(req, res, next) {
  */
 var data = function(req, res) {
     var text = req.body.text.split(" ");
+    var option = text.shift();
     // if (req.body.text === "start") {
     //     cron.start();
     // }
@@ -34,34 +35,37 @@ var data = function(req, res) {
     //     cron.stop();
     // }
 
-    switch (text[0]) {
+    switch (option) {
 
         case "help":
             res.json({
                 response_type: "ephemeral",
-                text:"Esto es una línea\nY ésta es otra"
+                text:"Esto es una línea.\nY ésta es otra."
             });
             break;
 
         case "add":
-            var url = text[-1];
-            text.pop();
-            text.shift();
+            var url = text.pop();
             var name = text.join(" ");
             var webpage = {
-                url: url,
                 name: name,
+                url: url,
                 user: req.body.user_name
             };
-            var status = WebPageService.add(webpage);
-            if (status.success) {
-                res.json({
-                    response_type: "ephemeral",
-                    text:"Página web añadida con éxito"
-                });
-            } else {
-                //TODO
-            }
+
+            WebpageService.add(webpage, function(err) {
+                if (err) {
+                    return res.json({
+                        response_type: "in_channel",
+                        text:"Error al añadir la página web. El nombre o la URL ya están registrados."
+                    });
+                } else {
+                    res.json({
+                        response_type: "in_channel",
+                        text:"Página web añadida con éxito."
+                    });
+                }
+            });
             break;
 
         default:
@@ -72,33 +76,8 @@ var data = function(req, res) {
 
     }
 
-    if (text[0] === "help") {
-
-    } else {
-
-    }
-
     //TODO res.end();
 
-    /**
-    var webpage = new Webpage({
-        name : req.body.name,
-        url : req.body.url,
-        user : req.body.user
-    });
-    webpage.save(function(err, webpage) {
-        if (!err) {
-            if (!webpage) {
-                next();
-            }
-            res.json({token: process.env.WATCHBOT_TOKEN});
-            //res.json({success: true, msg: 'Successful created new user.'});
-        } else {
-            res.send(500, err.message);
-            //return res.json({success: false, msg: 'Username or e-mail already exists.'});
-        }
-    });
-    */
 };
 
 module.exports = {
