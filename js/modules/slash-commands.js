@@ -1,7 +1,7 @@
 var Webpage  = require('../models/webpage');
 var dotenv   = require('dotenv');
 var slackAPI = require('node-slack');
-var cron     = require('cron');
+var cron     = require('./cron-watch');
 
 /** Carga variables de entorno desde un fichero .env al process.env */
 dotenv.load();
@@ -42,6 +42,14 @@ var data = function(req, res) {
     //    text: "Hello from the other side!"
     //});
     //res.end();
+    if (req.body.text === "start") {
+        cron.start();
+    }
+
+    if (req.body.text === "stop") {
+        cron.stop();
+    }
+
     res.json({
         response_type: "in_channel",
         text:"Hola de nuevo."
