@@ -56,13 +56,16 @@ var data = function(req, res) {
             WebpageService.add(webpage, function(err) {
                 if (err) {
                     return res.json({
-                        response_type: "in_channel",
+                        response_type: "ephemeral",
                         text:"Error al añadir la página web. El nombre o la URL ya están registrados."
                     });
                 } else {
                     res.json({
                         response_type: "in_channel",
-                        text:"Página web añadida con éxito."
+                        text:"Página web añadida con éxito.",
+                        attachments: [{
+                            text: webpage.name + "\n" + webpage.url
+                        }]
                     });
                 }
             });
