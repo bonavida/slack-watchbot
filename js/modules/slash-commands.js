@@ -112,7 +112,7 @@ var data = function(req, res) {
 
         case "remove":
             /** Comprueba si el número de parámetros es correcto */
-            if (text.length != 1) {
+            if (text.length === 0) {
                 res.json({
                     response_type: "ephemeral",
                     text: "Error al eliminar la página web.",
@@ -123,7 +123,7 @@ var data = function(req, res) {
                 });
             } else {
 
-                var removeName = text[0]; // Nombre de la página web a borrar
+                var removeName = text.join(" "); // Nombre de la página web a borrar
 
                 /** Elimina la página web la base de datos */
                 WebpageService.remove(removeName, function(removed, msg) {

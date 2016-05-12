@@ -20,16 +20,18 @@ var add = function(wp, callback) {
     });
 };
 
+
 /**
  * Método para eliminar una página web de la base de datos
  * a través del campo 'name' (nombre de la página web)
  */
 var remove = function(removeName, callback) {
+    /** Busca un objeto en la base de datos */
     Webpage.findOne({name : removeName}, function(err, webpage) {
-        if (!webpage) {
+        if (!webpage) { // Si no lo ha encontrado
             return callback(false, "La página web con nombre " + removeName + " no está registrada.");
         }
-        webpage.remove(function(err) {
+        webpage.remove(function(err) { // Si lo ha encontrado, elimina el objeto
             if (err) {
                 return callback(false, "Ha habido un error. Inténtelo de nuevo.");
             }
@@ -37,6 +39,7 @@ var remove = function(removeName, callback) {
         });
     });
 };
+
 
 module.exports = {
   add: add,
