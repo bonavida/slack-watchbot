@@ -45,30 +45,52 @@ var data = function(req, res) {
             break;
 
         case "add":
-            var url = text.pop();
-            var name = text.join(" ");
-            var webpage = {
-                name: name,
-                url: url,
-                user: req.body.user_name
-            };
-
-            WebpageService.add(webpage, function(err) {
-                if (err) {
-                    return res.json({
-                        response_type: "ephemeral",
-                        text:"Error al añadir la página web. El nombre o la URL ya están registrados."
-                    });
-                } else {
+            if (text.length < 2) {
+                res.json({
+                    response_type: "ephemeral",
+                    text: "Número de parámetros incorrecto.",
+                    attachments: [{
+                        text: "/watch add <nombre> <url>"
+                    }]
+                });
+            } else {
+                var url = text.pop();
+                if (!url.match(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/)) {
                     res.json({
-                        response_type: "in_channel",
-                        text:"Página web añadida con éxito.",
+                        response_type: "ephemeral",
+                        text: "La URL de la página web ha de tener un formato correcto.",
                         attachments: [{
-                            text: webpage.name + "\n" + webpage.url
+                            title: "Ejemplos de ayuda",
+                            text: "http://ejemplo.com\nhttp://wwww.ejemplo.com\nhttp://ejemplo.com/ejemplo.html?q=ejemplo\nhttps://ejemplo.com"
                         }]
                     });
+                } else {
+                    var name = text.join(" ");
+                    var webpage = {
+                        name: name,
+                        url: url,
+                        user: req.body.user_name
+                    };
+
+                    WebpageService.add(webpage, function(err) {
+                        if (err) {
+                            return res.json({
+                                response_type: "ephemeral",
+                                text:"Error al añadir la página web. El nombre o la URL ya están registrados."
+                            });
+                        } else {
+                            res.json({
+                                response_type: "in_channel",
+                                text:"Página web añadida con éxito.",
+                                attachments: [{
+                                    text: webpage.name + "\n" + webpage.url
+                                }]
+                            });
+                        }
+                    });
                 }
-            });
+            }
+
             break;
 
         default:
