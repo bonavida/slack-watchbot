@@ -8,7 +8,8 @@ var add = function(wp, callback) {
     var webpage = new Webpage({
         name : wp.name,
         url  : wp.url,
-        user : wp.user
+        user : wp.user,
+        channel: wp.channel
     });
     /** Guarda la instancia en la base de datos */
     webpage.save(function(err) {

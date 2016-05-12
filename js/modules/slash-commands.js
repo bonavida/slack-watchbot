@@ -26,7 +26,8 @@ var info = function(req, res, next) {
  */
 var data = function(req, res) {
     var text = req.body.text.split(" ");
-    var option = text.shift();
+    var option = text.shift(); // La opción es el primer parámetro
+
     // if (req.body.text === "start") {
     //     cron.start();
     // }
@@ -45,45 +46,60 @@ var data = function(req, res) {
             break;
 
         case "add":
+            /** Comprueba si el número de parámetros es correcto */
             if (text.length < 2) {
                 res.json({
                     response_type: "ephemeral",
-                    text: "Número de parámetros incorrecto.",
+                    text: "Error al añadir la página web.",
                     attachments: [{
-                        text: "/watch add <nombre> <url>"
+                        text: "Número de parámetros incorrecto.\n/watch add <nombre> <url>",
+                        color: "danger"
                     }]
                 });
             } else {
-                var url = text.pop();
+
+                var url = text.pop(); // La URL es el último parámetro
+
+                /** Comprueba si la URL de la página web es válida a través de una expresión regular */
                 if (!url.match(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/)) {
                     res.json({
                         response_type: "ephemeral",
-                        text: "La URL de la página web ha de tener un formato correcto.",
+                        text: "Error al añadir la página web.",
                         attachments: [{
-                            title: "Ejemplos de ayuda",
-                            text: "http://ejemplo.com\nhttp://wwww.ejemplo.com\nhttp://ejemplo.com/ejemplo.html?q=ejemplo\nhttps://ejemplo.com"
+                            text: "La URL de la página web ha de tener un formato válido.\n" +
+                                  "http://ejemplo.com\nhttp://wwww.ejemplo.com\n" +
+                                  "http://ejemplo.com/ejemplo.html?q=ejemplo\nhttps://ejemplo.com",
+                            color: "danger"
                         }]
                     });
                 } else {
-                    var name = text.join(" ");
+                    var name = text.join(" "); // Une las cadenas con un espacio en blanco para formar el nombre de la página web
+
+                    /** Encapsula los datos que se quiere guardar */
                     var webpage = {
                         name: name,
                         url: url,
-                        user: req.body.user_name
+                        user: req.body.user_name,
+                        channgel: req.body.channel_name
                     };
-
+                    /** Guarda los datos en la base de datos */
                     WebpageService.add(webpage, function(err) {
                         if (err) {
                             return res.json({
                                 response_type: "ephemeral",
-                                text:"Error al añadir la página web. El nombre o la URL ya están registrados."
+                                text: "Error al añadir la página web.",
+                                attachments: [{
+                                    text: "El nombre o la URL ya están registrados.",
+                                    color: "danger"
+                                }]
                             });
                         } else {
                             res.json({
                                 response_type: "in_channel",
                                 text:"Página web añadida con éxito.",
                                 attachments: [{
-                                    text: webpage.name + "\n" + webpage.url
+                                    text: webpage.name + "\n" + webpage.url,
+                                    color: "good"
                                 }]
                             });
                         }
@@ -96,7 +112,7 @@ var data = function(req, res) {
         default:
             res.json({
                 response_type: "ephemeral",
-                text:"Comando no identificado. Escribe /watch help para más información."
+                text:"Comando no identificado.\nEscribe /watch help para más información."
             });
 
     }

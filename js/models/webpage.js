@@ -13,6 +13,7 @@ var webpageSchema = new Schema({
     url : { type: String, unique: true },
     dateAdded : Date,
     user : String,
+    channel: String,
     incidencies : [{
         incidencyDate : Date
     }]
