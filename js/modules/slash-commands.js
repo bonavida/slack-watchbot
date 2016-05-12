@@ -80,7 +80,7 @@ var data = function(req, res) {
                         name: name,
                         url: url,
                         user: req.body.user_name,
-                        channgel: req.body.channel_name
+                        channel: req.body.channel_name
                     };
                     /** Guarda los datos en la base de datos */
                     WebpageService.add(webpage, function(err) {
