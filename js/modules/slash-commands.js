@@ -84,20 +84,20 @@ var data = function(req, res) {
                         channel: req.body.channel_name
                     };
                     /** Guarda los datos en la base de datos */
-                    WebpageService.add(webpage, function(err) {
+                    WebpageService.add(webpage, function(err, msg) {
                         if (err) {
                             return res.json({
                                 response_type: "ephemeral",
                                 text: "Error al añadir la página web.",
                                 attachments: [{
-                                    text: "El nombre o la URL ya están registrados.",
+                                    text: msg,
                                     color: "danger"
                                 }]
                             });
                         } else {
                             res.json({
                                 response_type: "in_channel",
-                                text:"Página web añadida con éxito.",
+                                text: msg,
                                 attachments: [{
                                     text: webpage.name + "\n" + webpage.url,
                                     color: "good"
@@ -125,21 +125,21 @@ var data = function(req, res) {
 
                 var removeName = text[0]; // Nombre de la página web a borrar
 
-                /** Guarda los datos en la base de datos */
-                WebpageService.remove(removeName, function(err) {
-                    if (err) {
+                /** Elimina la página web la base de datos */
+                WebpageService.remove(removeName, function(removed, msg) {
+                    if (!removed) {
                         return res.json({
                             response_type: "ephemeral",
                             text: "Error al eliminar la página web.",
                             attachments: [{
-                                text: "La página web con nombre " + removeName + " no está registrada.",
+                                text: msg,
                                 color: "danger"
                             }]
                         });
                     } else {
                         res.json({
                             response_type: "in_channel",
-                            text:"Página web eliminada con éxito."
+                            text: msg
                         });
                     }
                 });

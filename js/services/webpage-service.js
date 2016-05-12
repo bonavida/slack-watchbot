@@ -14,9 +14,9 @@ var add = function(wp, callback) {
     /** Guarda la instancia en la base de datos */
     webpage.save(function(err) {
         if (err) {
-            return callback(err);
+            return callback(err, "El nombre o la URL ya están registrados.");
         }
-        callback(null);
+        callback(null, "Página web añadida con éxito.");
     });
 };
 
@@ -27,13 +27,13 @@ var add = function(wp, callback) {
 var remove = function(removeName, callback) {
     Webpage.findOne({name : removeName}, function(err, webpage) {
         if (!webpage) {
-            return callback(err);
+            return callback(false, "La página web con nombre " + removeName + " no está registrada.");
         }
         webpage.remove(function(err) {
             if (err) {
-                return callback(err);
+                return callback(false, "Ha habido un error. Inténtelo de nuevo.");
             }
-            callback(null);
+            callback(true, "Página web eliminada con éxito.");
         });
     });
 };
