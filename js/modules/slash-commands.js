@@ -73,6 +73,7 @@ var data = function(req, res) {
                         }]
                     });
                 } else {
+
                     var name = text.join(" "); // Une las cadenas con un espacio en blanco para formar el nombre de la página web
 
                     /** Encapsula los datos que se quiere guardar */
@@ -105,6 +106,43 @@ var data = function(req, res) {
                         }
                     });
                 }
+            }
+
+            break;
+
+        case "remove":
+            /** Comprueba si el número de parámetros es correcto */
+            if (text.length != 1) {
+                res.json({
+                    response_type: "ephemeral",
+                    text: "Error al eliminar la página web.",
+                    attachments: [{
+                        text: "Número de parámetros incorrecto.\n/watch remove <nombre>",
+                        color: "danger"
+                    }]
+                });
+            } else {
+
+                var removeName = text[0]; // Nombre de la página web a borrar
+
+                /** Guarda los datos en la base de datos */
+                WebpageService.remove(removeName, function(err) {
+                    if (err) {
+                        return res.json({
+                            response_type: "ephemeral",
+                            text: "Error al eliminar la página web.",
+                            attachments: [{
+                                text: "La página web con nombre " + removeName + " no está registrada.",
+                                color: "danger"
+                            }]
+                        });
+                    } else {
+                        res.json({
+                            response_type: "in_channel",
+                            text:"Página web eliminada con éxito."
+                        });
+                    }
+                });
             }
 
             break;

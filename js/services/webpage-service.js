@@ -20,6 +20,25 @@ var add = function(wp, callback) {
     });
 };
 
+/**
+ * Método para eliminar una página web de la base de datos
+ * a través del campo 'name' (nombre de la página web)
+ */
+var remove = function(removeName, callback) {
+    Webpage.findOne({name : removeName}, function(err, webpage) {
+        if (!webpage) {
+            return callback(err);
+        }
+        webpage.remove(function(err) {
+            if (err) {
+                return callback(err);
+            }
+            callback(null);
+        });
+    });
+};
+
 module.exports = {
-  add: add
+  add: add,
+  remove: remove
 };
