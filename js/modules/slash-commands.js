@@ -147,6 +147,63 @@ var data = function(req, res) {
 
             break;
 
+        case "list":
+            /** Comprueba si el número de parámetros es correcto */
+            if (text.length > 2) {
+                res.json({
+                    response_type: "ephemeral",
+                    text: "Error al listar las páginas web.",
+                    attachments: [{
+                        text: "Número de parámetros incorrecto.\n/watch list\n/watch list all",
+                        color: "danger"
+                    }]
+                });
+            } else if (text.length === 1) {  // Lista todas las páginas web
+                if (text === "all") {  // Comando correcto
+
+                } else {  // Comando incorrecto
+                    res.json({
+                        response_type: "ephemeral",
+                        text: "Error al listar las páginas web.",
+                        attachments: [{
+                            text: "Comando no identificado. Por favor, usa los siguientes comandos:\n" +
+                                  "/watch list\n/watch list all",
+                            color: "danger"
+                        }]
+                    });
+                }
+
+            } else {  // Lista las páginas web registradas por el usuario que escribe el comando
+
+                var userName = req.body.user_name;
+
+                WebpageService.list(userName, function(webpages, msg) {
+                    if (!webpages) {
+                        return res.json({
+                            response_type: "ephemeral",
+                            text: "Error al listar las páginas web.",
+                            attachments: [{
+                                text: msg,
+                                color: "danger"
+                            }]
+                        });
+                    } else {
+                        res.json({
+                            response_type: "in_channel",
+                            text: msg,
+                            attachments: [{
+                                text: listToString(webpages),
+                                color: "0080ff",
+                                mrkdwn_in: ["text"]
+                            }]
+                        });
+                    }
+                });
+
+            }
+
+            break;
+
         default:
             res.json({
                 response_type: "ephemeral",
@@ -158,6 +215,22 @@ var data = function(req, res) {
     //TODO res.end();
 
 };
+
+
+function listToString(webpages) {
+    var res = "";
+    for (var webpage in webpages) {
+        var dayAdded = webpage.dateAdded.getDate();
+        var monthAdded = webpage.dateAdded.getMonth() + 1;  // El mes va del 0 al 11
+        var yearAdded = webpage.dateAdded.getFullYear();
+        var hourAdded = webpage.dateAdded.getHours() + ":" + webpage.dateAdded.getMinutes();
+        res += "*" + webpage.name + "*" +
+               "  " + webpage.url + "\n" +
+               "Añadido el " + dayAdded + "/" + monthAdded + "/" + yearAdded + " a las " + hourAdded + "\n" +
+               "Nº de veces caído: " + webpage.incidencies.length + "\n\n";
+    }
+    return res;
+}
 
 module.exports = {
     data: data

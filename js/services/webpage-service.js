@@ -26,12 +26,12 @@ var add = function(wp, callback) {
  * a través del campo 'name' (nombre de la página web)
  */
 var remove = function(removeName, callback) {
-    /** Busca un objeto en la base de datos */
+    /** Busca un objeto en la base de datos con ese nombre (campo único) */
     Webpage.findOne({name : removeName}, function(err, webpage) {
-        if (!webpage) { // Si no lo ha encontrado
+        if (!webpage) {  // Si no lo ha encontrado
             return callback(false, "La página web con nombre \"" + removeName + "\" no está registrada.");
         }
-        webpage.remove(function(err) { // Si lo ha encontrado, elimina el objeto
+        webpage.remove(function(err) {  // Si lo ha encontrado, elimina el objeto
             if (err) {
                 return callback(false, "Ha habido un error. Inténtelo de nuevo.");
             }
@@ -41,7 +41,21 @@ var remove = function(removeName, callback) {
 };
 
 
+/**
+ * Método que, dado un nombre de usuario, busca todas las páginas web que ha añadido dicho usuario
+ */
+var list = function(userName, callback) {
+    Webpage.find({user: userName}, function(err, webpages) {
+        if (!webpages) {  // Si no ha encontrado páginas web
+            return callback(webpages, "Este usuario no ha registrado ninguna página web.");
+        }  // Si ha encontrado páginas web
+        callback(webpages, "El usuario ha registrado las siguientes páginas web:");
+    });
+};
+
+
 module.exports = {
   add: add,
-  remove: remove
+  remove: remove,
+  list: list
 };
