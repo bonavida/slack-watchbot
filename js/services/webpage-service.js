@@ -29,7 +29,7 @@ var remove = function(removeName, callback) {
     /** Busca un objeto en la base de datos */
     Webpage.findOne({name : removeName}, function(err, webpage) {
         if (!webpage) { // Si no lo ha encontrado
-            return callback(false, "La página web con nombre " + removeName + " no está registrada.");
+            return callback(false, "La página web con nombre \"" + removeName + "\" no está registrada.");
         }
         webpage.remove(function(err) { // Si lo ha encontrado, elimina el objeto
             if (err) {
