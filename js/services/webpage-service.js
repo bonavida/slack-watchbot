@@ -47,11 +47,28 @@ var remove = function(removeName, callback) {
 var list = function(userName, callback) {
     Webpage.find({user: userName}, function(err, webpages) {
         if (!webpages) {  // Si no ha encontrado páginas web
-            return callback(webpages, "Este usuario no ha registrado ninguna página web.");
+            return callback(false, "Este usuario no ha registrado ninguna página web.");
         }  // Si ha encontrado páginas web
-        callback(webpages, "El usuario ha registrado las siguientes páginas web:");
+        callback(true, listToString(webpages));
     });
 };
+
+function listToString(webpages) {
+    var res = "";
+    for (var webpage in webpages) {
+        var date = new Date(webpage.dateAdded);
+        var dayAdded = date.getDate();
+        var monthAdded = date.getMonth() + 1;  // El mes va del 0 al 11
+        var yearAdded = date.getFullYear();
+        var hourAdded = date.getHours() + ":" + date.getMinutes();
+        var incidencies = webpage.incidencies===undefined ? 0 : webpage.incidencies.length;
+        res += "*" + webpage.name + "*" +
+               "  " + webpage.url + "\n" +
+               "Añadido el " + dayAdded + "/" + monthAdded + "/" + yearAdded + " a las " + hourAdded + "\n" +
+               "Nº de veces caído: " + incidencies + "\n\n";
+    }
+    return res;
+}
 
 
 module.exports = {

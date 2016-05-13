@@ -29,6 +29,8 @@ webpageSchema.pre('save', function(next) {
         this.dateAdded = currentDate;
     }
 
+    this.incidencies = [];
+
     next();
 });
 

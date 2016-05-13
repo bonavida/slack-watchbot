@@ -190,9 +190,9 @@ var data = function(req, res) {
                     } else {
                         res.json({
                             response_type: "in_channel",
-                            text: msg,
+                            text: "El usuario ha registrado las siguientes páginas web:",
                             attachments: [{
-                                text: listToString(webpages),
+                                text: msg,
                                 color: "0080ff",
                                 mrkdwn_in: ["text"]
                             }]
@@ -216,21 +216,6 @@ var data = function(req, res) {
 
 };
 
-
-function listToString(webpages) {
-    var res = "";
-    for (var webpage in webpages) {
-        var dayAdded = webpage.dateAdded.getDate();
-        var monthAdded = webpage.dateAdded.getMonth() + 1;  // El mes va del 0 al 11
-        var yearAdded = webpage.dateAdded.getFullYear();
-        var hourAdded = webpage.dateAdded.getHours() + ":" + webpage.dateAdded.getMinutes();
-        res += "*" + webpage.name + "*" +
-               "  " + webpage.url + "\n" +
-               "Añadido el " + dayAdded + "/" + monthAdded + "/" + yearAdded + " a las " + hourAdded + "\n" +
-               "Nº de veces caído: " + webpage.incidencies.length + "\n\n";
-    }
-    return res;
-}
 
 module.exports = {
     data: data
