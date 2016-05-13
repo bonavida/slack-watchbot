@@ -177,26 +177,34 @@ var data = function(req, res) {
 
                 var userName = req.body.user_name;
 
-                WebpageService.list(userName, function(webpages, msg) {
-                    if (!webpages) {
+                WebpageService.getWebpages(userName, function(err, webpages) {
+                    if (err) {
                         return res.json({
                             response_type: "ephemeral",
                             text: "Error al listar las páginas web.",
                             attachments: [{
-                                text: msg,
+                                text: "Ha habido un error. Inténtelo de nuevo.",
                                 color: "danger"
                             }]
                         });
                     } else {
-                        res.json({
-                            response_type: "in_channel",
-                            text: "El usuario ha registrado las siguientes páginas web:",
-                            attachments: [{
-                                text: msg,
-                                color: "0080ff",
-                                mrkdwn_in: ["text"]
-                            }]
-                        });
+                        if (webpages.length === 0) {
+                            res.json({
+                                response_type: "in_channel",
+                                text: "Este usuario no ha registrado ninguna página web."
+                            });
+                        } else {
+                            res.json({
+                                response_type: "in_channel",
+                                text: "El usuario ha registrado las siguientes páginas web:",
+                                attachments: [{
+                                    text: listToString(webpages),
+                                    color: "0080ff",
+                                    mrkdwn_in: ["text"]
+                                }]
+                            });
+                        }
+
                     }
                 });
 
@@ -216,6 +224,22 @@ var data = function(req, res) {
 
 };
 
+function listToString(webpages) {
+    var res = "";
+    for (var webpage in webpages) {
+        var date = new Date(webpage.dateAdded);
+        var dayAdded = date.getDate();
+        var monthAdded = date.getMonth() + 1;  // El mes va del 0 al 11
+        var yearAdded = date.getFullYear();
+        var hourAdded = date.getHours() + ":" + date.getMinutes();
+        var incidencies = webpage.incidencies===undefined ? 0 : webpage.incidencies.length;
+        res += "*" + webpage.name + "*" +
+               "  " + webpage.url + "\n" +
+               "Añadido el " + dayAdded + "/" + monthAdded + "/" + yearAdded + " a las " + hourAdded + "\n" +
+               "Nº de veces caído: " + incidencies + "\n\n";
+    }
+    return res;
+}
 
 module.exports = {
     data: data
