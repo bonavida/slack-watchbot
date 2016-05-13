@@ -189,16 +189,29 @@ var data = function(req, res) {
                         });
                     } else {
                         if (webpages.length === 0) {
-                            res.json({
-                                response_type: "in_channel",
+                            return res.json({
+                                response_type: "ephemeral",
                                 text: "Este usuario no ha registrado ninguna página web."
                             });
                         } else {
+                            var msg = "";
+                            for (var webpage in webpages) {
+                                var date = new Date(webpage.dateAdded);
+                                var dayAdded = date.getDate();
+                                var monthAdded = date.getMonth() + 1;  // El mes va del 0 al 11
+                                var yearAdded = date.getFullYear();
+                                var hourAdded = date.getHours() + ":" + date.getMinutes();
+                                var incidencies = webpage.incidencies===undefined ? 0 : webpage.incidencies.length;
+                                msg += "*" + webpage.name + "*" +
+                                       "  " + webpage.url + "\n" +
+                                       "Añadido el " + dayAdded + "/" + monthAdded + "/" + yearAdded + " a las " + hourAdded + "\n" +
+                                       "Nº de veces caído: " + incidencies + "\n\n";
+                            }
                             res.json({
                                 response_type: "in_channel",
                                 text: "El usuario ha registrado las siguientes páginas web:",
                                 attachments: [{
-                                    text: listToString(webpages),
+                                    text: msg,
                                     color: "0080ff",
                                     mrkdwn_in: ["text"]
                                 }]
@@ -223,23 +236,6 @@ var data = function(req, res) {
     //TODO res.end();
 
 };
-
-function listToString(webpages) {
-    var res = "";
-    for (var webpage in webpages) {
-        var date = new Date(webpage.dateAdded);
-        var dayAdded = date.getDate();
-        var monthAdded = date.getMonth() + 1;  // El mes va del 0 al 11
-        var yearAdded = date.getFullYear();
-        var hourAdded = date.getHours() + ":" + date.getMinutes();
-        var incidencies = webpage.incidencies===undefined ? 0 : webpage.incidencies.length;
-        res += "*" + webpage.name + "*" +
-               "  " + webpage.url + "\n" +
-               "Añadido el " + dayAdded + "/" + monthAdded + "/" + yearAdded + " a las " + hourAdded + "\n" +
-               "Nº de veces caído: " + incidencies + "\n\n";
-    }
-    return res;
-}
 
 module.exports = {
     data: data

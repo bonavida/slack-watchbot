@@ -49,9 +49,31 @@ var getWebpages = function(userName, callback) {
         if (err) {
             return callback(err, webpages);
         }
-        callback(err, webpages);
+        callback(null, webpages);
     });
 };
+
+
+// function listToString(webpages) {
+//     var res = "";
+//     if (webpages.length === 0) {
+//         res = "Este usuario no ha registrado ninguna página web.";
+//     } else {
+//         for (var webpage in webpages) {
+//             var date = new Date(webpage.dateAdded);
+//             var dayAdded = date.getDate();
+//             var monthAdded = date.getMonth() + 1;  // El mes va del 0 al 11
+//             var yearAdded = date.getFullYear();
+//             var hourAdded = date.getHours() + ":" + date.getMinutes();
+//             var incidencies = webpage.incidencies===undefined ? 0 : webpage.incidencies.length;
+//             res += "*" + webpage.name + "*" +
+//                    "  " + webpage.url + "\n" +
+//                    "Añadido el " + dayAdded + "/" + monthAdded + "/" + yearAdded + " a las " + hourAdded + "\n" +
+//                    "Nº de veces caído: " + incidencies + "\n\n";
+//         }
+//     }
+//     return res;
+// }
 
 module.exports = {
   add: add,
