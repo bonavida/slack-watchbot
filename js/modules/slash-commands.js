@@ -159,8 +159,36 @@ var data = function(req, res) {
                     }]
                 });
             } else if (text.length === 1) {  // Lista todas las páginas web
-                if (text === "all") {  // Comando correcto
-
+                if (text[0] === "all") {  // Comando correcto
+                    WebpageService.getAllWebpages(function (err, webpages) {
+                        if (err) {
+                            return res.json({
+                                response_type: "ephemeral",
+                                text: "Error al listar las páginas web.",
+                                attachments: [{
+                                    text: "Ha habido un error. Inténtelo de nuevo.",
+                                    color: "danger"
+                                }]
+                            });
+                        } else {
+                            if (webpages.length === 0) {
+                                return res.json({
+                                    response_type: "ephemeral",
+                                    text: "No se ha registrado ninguna página web."
+                                });
+                            } else {
+                                res.json({
+                                    response_type: "in_channel",
+                                    text: "Se han registrado las siguientes páginas web:",
+                                    attachments: [{
+                                        text: listToString(webpages, true),
+                                        color: "0080ff",
+                                        mrkdwn_in: ["text"]
+                                    }]
+                                });
+                            }
+                        }
+                    });
                 } else {  // Comando incorrecto
                     res.json({
                         response_type: "ephemeral",
@@ -198,7 +226,7 @@ var data = function(req, res) {
                                 response_type: "in_channel",
                                 text: "El usuario @" + userName + " ha registrado las siguientes páginas web:",
                                 attachments: [{
-                                    text: listToString(webpages),
+                                    text: listToString(webpages, false),
                                     color: "0080ff",
                                     mrkdwn_in: ["text"]
                                 }]
@@ -222,7 +250,7 @@ var data = function(req, res) {
 
 };
 
-function listToString(webpages) {
+function listToString(webpages, listAll) {
     var msg = "";
     for (var i = 0; i < webpages.length; i++) {
         var date = new Date(webpages[i].dateAdded);
@@ -233,8 +261,11 @@ function listToString(webpages) {
         var incidencies = webpages[i].incidencies===undefined ? 0 : webpages[i].incidencies.length;
         msg += "*" + webpages[i].name + "*" +
                "  " + webpages[i].url + "\n" +
-               "Añadido el " + dayAdded + "/" + monthAdded + "/" + yearAdded + " a las " + hourAdded + "\n" +
-               "Nº de veces caído: " + incidencies + "\n\n";
+               "Añadido el " + dayAdded + "/" + monthAdded + "/" + yearAdded + " a las " + hourAdded;
+        if (listAll) {
+            msg += " por el usuario @" + webpages[i].user;
+        }
+        msg += "\nNº de veces caído: " + incidencies + "\n\n";
     }
     return msg;
 }

@@ -42,7 +42,21 @@ var remove = function(removeName, callback) {
 
 
 /**
- * Método que, dado un nombre de usuario, busca todas las páginas web que ha añadido dicho usuario
+ * Método que devuelve todas las páginas web registradas en la base de datos
+ */
+var getAllWebpages = function(callback) {
+    Webpage.find({}).sort('dateAdded').exec(function(err, webpages) {
+        if (err) {
+            return callback(err, webpages);
+        }
+        callback(null, webpages);
+    });
+};
+
+
+/**
+ * Método que, dado un nombre de usuario, busca y devuelve sólo las páginas web
+ * registradas en la base de datos que ha añadido dicho usuario
  */
 var getWebpages = function(userName, callback) {
     Webpage.find({user: userName}, function(err, webpages) {
@@ -57,5 +71,6 @@ var getWebpages = function(userName, callback) {
 module.exports = {
   add: add,
   remove: remove,
+  getAllWebpages: getAllWebpages,
   getWebpages: getWebpages
 };
