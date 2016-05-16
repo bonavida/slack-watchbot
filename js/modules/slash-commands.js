@@ -1,28 +1,11 @@
 var Webpage        = require('../models/webpage');
 var WebpageService = require('../services/webpage-service');
+var slackMessage   = require('./slack-message');
 var cron           = require('./cron-watch');
 
 
 /**
- * Método para informar en el canal de Slack, ya sea para ofrecer ayuda
- * o listar todas las páginas web registradas en la aplicación
- */
-var info = function(req, res, next) {
-    Webpage.find(function(err, webpages) {
-        if (!err) {
-            if (!webpages) {
-                next();
-            } else {
-                res.json(webpages);
-            }
-        } else {
-            res.send(500, err.message);
-        }
-    });
-};
-
-/**
- * Método para crear o eliminar una página web en la aplicación desde Slack
+ * Método para tratar un comando de Slack
  */
 var data = function(req, res) {
     var text = req.body.text.split(" ");
@@ -35,12 +18,6 @@ var data = function(req, res) {
     // if (req.body.text === "stop") {
     //     cron.stop();
     // }
-
-    var message = {
-        response_type: "ephemeral",
-        text: "",
-        attachments: []
-    };
 
     switch (option) {
 
@@ -89,27 +66,10 @@ var data = function(req, res) {
                         user: req.body.user_name,
                         channel: req.body.channel_name
                     };
-                    /** Guarda los datos en la base de datos */
-                    WebpageService.add(webpage, function(err, msg) {
-                        if (err) {
-                            return res.json({
-                                response_type: "ephemeral",
-                                text: "Error al añadir la página web.",
-                                attachments: [{
-                                    text: msg,
-                                    color: "danger"
-                                }]
-                            });
-                        } else {
-                            res.json({
-                                response_type: "in_channel",
-                                text: msg,
-                                attachments: [{
-                                    text: webpage.name + "\n" + webpage.url,
-                                    color: "good"
-                                }]
-                            });
-                        }
+
+                    /** Guarda los datos en la base de datos y envía el mensaje a Slack */
+                    slackMessage.add(webpage, function(msg) {
+                        res.json(msg);
                     });
                 }
             }
@@ -131,24 +91,11 @@ var data = function(req, res) {
 
                 var removeName = text.join(" "); // Nombre de la página web a borrar
 
-                /** Elimina la página web de la base de datos */
-                WebpageService.remove(removeName, function(removed, msg) {
-                    if (!removed) {
-                        return res.json({
-                            response_type: "ephemeral",
-                            text: "Error al eliminar la página web.",
-                            attachments: [{
-                                text: msg,
-                                color: "danger"
-                            }]
-                        });
-                    } else {
-                        res.json({
-                            response_type: "in_channel",
-                            text: msg
-                        });
-                    }
+                /** Elimina la página web de la base de datos y envía un mensaje a Slack */
+                slackMessage.remove(removeName, function(msg) {
+                    res.json(msg);
                 });
+
             }
 
             break;
@@ -166,34 +113,8 @@ var data = function(req, res) {
                 });
             } else if (text.length === 1) {  // Lista todas las páginas web
                 if (text[0] === "all") {  // Comando válido
-                    WebpageService.getAllWebpages(function (err, webpages) {
-                        if (err) {
-                            return res.json({
-                                response_type: "ephemeral",
-                                text: "Error al listar las páginas web.",
-                                attachments: [{
-                                    text: "Ha habido un error. Inténtelo de nuevo.",
-                                    color: "danger"
-                                }]
-                            });
-                        } else {
-                            if (webpages.length === 0) {
-                                return res.json({
-                                    response_type: "ephemeral",
-                                    text: "No se ha registrado ninguna página web."
-                                });
-                            } else {
-                                res.json({
-                                    response_type: "in_channel",
-                                    text: "Se han registrado las siguientes páginas web:",
-                                    attachments: [{
-                                        text: listToString(webpages, true, false),
-                                        color: "0080ff",
-                                        mrkdwn_in: ["text"]
-                                    }]
-                                });
-                            }
-                        }
+                    slackMessage.getAllWebpages(function(msg) {
+                        res.json(msg);
                     });
                 } else {  // Comando no válido
                     res.json({
@@ -206,39 +127,12 @@ var data = function(req, res) {
                         }]
                     });
                 }
-
             } else {  // Lista las páginas web registradas por el usuario que escribe el comando
 
                 var userName = req.body.user_name;
 
-                WebpageService.getWebpages(userName, function(err, webpages) {
-                    if (err) {
-                        return res.json({
-                            response_type: "ephemeral",
-                            text: "Error al listar las páginas web.",
-                            attachments: [{
-                                text: "Ha habido un error. Inténtelo de nuevo.",
-                                color: "danger"
-                            }]
-                        });
-                    } else {
-                        if (webpages.length === 0) {
-                            return res.json({
-                                response_type: "ephemeral",
-                                text: "No has registrado ninguna página web."
-                            });
-                        } else {
-                            res.json({
-                                response_type: "in_channel",
-                                text: "El usuario @" + userName + " ha registrado las siguientes páginas web:",
-                                attachments: [{
-                                    text: listToString(webpages, false, false),
-                                    color: "0080ff",
-                                    mrkdwn_in: ["text"]
-                                }]
-                            });
-                        }
-                    }
+                slackMessage.getWebpages(userName, function(msg) {
+                    res.json(msg);
                 });
             }
 
