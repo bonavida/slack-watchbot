@@ -1,5 +1,5 @@
 var slackMessage   = require('./slack-message');
-var cron           = require('./cron-watch');
+var cron           = require('./watchbot');
 
 
 /**
