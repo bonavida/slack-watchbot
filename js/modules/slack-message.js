@@ -155,10 +155,9 @@ function listToString(webpages, isAll, isLog) {
     var msg = "";
     for (var i = 0; i < webpages.length; i++) {
         var date = new Date(webpages[i].dateAdded);
-        var strDate = formatDate(date);
         msg += "*" + webpages[i].name + "*" +
                "  " + webpages[i].url + "\n" +
-               "Añadido el " + strDate;
+               "Añadido el " + getFormatedDate(date);
         if (isAll) {
             msg += " por el usuario @" + webpages[i].user + "\n";
         } else {
@@ -168,8 +167,7 @@ function listToString(webpages, isAll, isLog) {
         if (isLog) {
             if (webpages[i].numIncidencies !== 0) {
                 var lastIncidency = new Date(webpages[i].lastIncidency);
-                var strLastIncidency = formatDate(lastIncidency);
-                msg += "Última vez caído el " + strLastIncidency;
+                msg += "Última vez caído el " + getFormatedDate(lastIncidency);
             }
             msg += "Tiempo de respuesta medio: " + webpages[i].averageResponseTime + "\n";
         }
@@ -179,11 +177,11 @@ function listToString(webpages, isAll, isLog) {
 }
 
 /** Método privado que convierte una fecha en una cadena de texto */
-function formatDate(date) {
-    var dayAdded = formatNumber(date.getDate());
-    var monthAdded = formatNumber(date.getMonth() + 1);  // El mes va del 0 al 11
+function getFormatedDate(date) {
+    var dayAdded = getFormatedNumber(date.getDate());
+    var monthAdded = getFormatedNumber(date.getMonth() + 1);  // El mes va del 0 al 11
     var yearAdded = date.getFullYear();
-    var hourAdded = formatNumber(date.getHours()) + ":" + formatNumber(date.getMinutes());
+    var hourAdded = getFormatedNumber(date.getHours()) + ":" + getFormatedNumber(date.getMinutes());
 
     var msg = dayAdded + "/" + monthAdded + "/" + yearAdded + " a las " + hourAdded;
 
@@ -191,7 +189,7 @@ function formatDate(date) {
 }
 
 /** Método privado que rellena un número con ceros para que tenga dos dígitos */
-function formatNumber(number) {
+function getFormatedNumber(number) {
     return ("0" + number).slice(-2);
 }
 
