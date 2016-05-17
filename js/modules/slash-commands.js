@@ -1,5 +1,3 @@
-var Webpage        = require('../models/webpage');
-var WebpageService = require('../services/webpage-service');
 var slackMessage   = require('./slack-message');
 var cron           = require('./cron-watch');
 
@@ -69,7 +67,7 @@ var data = function(req, res) {
 
                     /** Guarda los datos en la base de datos y envía el mensaje a Slack */
                     slackMessage.add(webpage, function(msg) {
-                        return res.json(msg);
+                        res.json(msg);
                     });
                 }
             }
@@ -93,7 +91,7 @@ var data = function(req, res) {
 
                 /** Elimina la página web de la base de datos y envía un mensaje a Slack */
                 slackMessage.remove(removeName, function(msg) {
-                    return res.json(msg);
+                    res.json(msg);
                 });
 
             }
@@ -102,7 +100,7 @@ var data = function(req, res) {
 
         case "list":
 
-            if (text.length > 2) {  // Comprueba si el número de parámetros es correcto
+            if (text.length > 1) {  // Comprueba si el número de parámetros es correcto
                 res.json({
                     response_type: "ephemeral",
                     text: "Error al listar las páginas web.",
@@ -111,10 +109,16 @@ var data = function(req, res) {
                         color: "danger"
                     }]
                 });
-            } else if (text.length === 1) {  // Lista todas las páginas web
+            } else if (text.length === 0) {  // Lista las páginas web registradas por el usuario que escribe el comando
+                var userName = req.body.user_name;
+
+                slackMessage.getWebpages(userName, function(msg) {
+                    res.json(msg);
+                });
+            } else {  // Lista todas las páginas web
                 if (text[0] === "all") {  // Comando válido
                     slackMessage.getAllWebpages(function(msg) {
-                        return res.json(msg);
+                        res.json(msg);
                     });
                 } else {  // Comando no válido
                     res.json({
@@ -127,13 +131,6 @@ var data = function(req, res) {
                         }]
                     });
                 }
-            } else {  // Lista las páginas web registradas por el usuario que escribe el comando
-
-                var userName = req.body.user_name;
-
-                slackMessage.getWebpages(userName, function(msg) {
-                    return res.json(msg);
-                });
             }
 
             break;
