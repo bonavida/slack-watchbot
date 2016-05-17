@@ -190,6 +190,7 @@ function formatDate(date) {
     return msg;
 }
 
+/** Método privado que rellena un número con ceros para que tenga dos dígitos */
 function formatNumber(number) {
     return ("0" + number).slice(-2);
 }

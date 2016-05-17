@@ -39,8 +39,9 @@ var data = function(req, res) {
                     response_type: "ephemeral",
                     text: "Error al añadir la página web.",
                     attachments: [{
-                        text: "Número de parámetros incorrecto.\n/watch add <nombre> <url>",
-                        color: "danger"
+                        text: "Número de parámetros incorrecto.\n`/watch add <nombre_sitio> <url_sitio>`",
+                        color: "danger",
+                        mrkdwn_in: ["text"]
                     }]
                 });
             } else {
@@ -54,9 +55,10 @@ var data = function(req, res) {
                         text: "Error al añadir la página web.",
                         attachments: [{
                             text: "La URL de la página web ha de tener un formato válido.\n" +
-                                  "http://ejemplo.com\nhttp://wwww.ejemplo.com\n" +
-                                  "http://ejemplo.com/ejemplo.html?q=ejemplo\nhttps://ejemplo.com",
-                            color: "danger"
+                                  "```http://ejemplo.com\nhttp://wwww.ejemplo.com\n" +
+                                  "http://ejemplo.com/ejemplo.html?q=ejemplo\nhttps://ejemplo.com```",
+                            color: "danger",
+                            mrkdwn_in: ["text"]
                         }]
                     });
                 } else {
@@ -87,8 +89,9 @@ var data = function(req, res) {
                     response_type: "ephemeral",
                     text: "Error al modificar el intervalo de vigilancia de una página web.",
                     attachments: [{
-                        text: "Número de parámetros incorrecto.\n/watch timeout <nombre_sitio> <intervalo_en_minutos>",
-                        color: "danger"
+                        text: "Número de parámetros incorrecto.\n`/watch timeout <nombre_sitio> <intervalo_en_minutos>`",
+                        color: "danger",
+                        mrkdwn_in: ["text"]
                     }]
                 });
             } else {
@@ -125,8 +128,9 @@ var data = function(req, res) {
                     response_type: "ephemeral",
                     text: "Error al eliminar la página web.",
                     attachments: [{
-                        text: "Número de parámetros incorrecto.\n/watch remove <nombre>",
-                        color: "danger"
+                        text: "Número de parámetros incorrecto.\n`/watch remove <nombre_sitio>`",
+                        color: "danger",
+                        mrkdwn_in: ["text"]
                     }]
                 });
             } else {
@@ -149,8 +153,10 @@ var data = function(req, res) {
                     response_type: "ephemeral",
                     text: "Error al listar las páginas web.",
                     attachments: [{
-                        text: "Número de parámetros incorrecto.\n/watch list\n/watch list all",
-                        color: "danger"
+                        text: "Número de parámetros incorrecto. Por favor, usa los siguientes comandos:\n" +
+                              "`/watch list`\n`/watch list all`",
+                        color: "danger",
+                        mrkdwn_in: ["text"]
                     }]
                 });
             } else if (text.length === 0) {  // Lista las páginas web registradas por el usuario que escribe el comando
@@ -170,8 +176,9 @@ var data = function(req, res) {
                         text: "Error al listar las páginas web.",
                         attachments: [{
                             text: "Comando no identificado. Por favor, usa los siguientes comandos:\n" +
-                                  "/watch list\n/watch list all",
-                            color: "danger"
+                                  "`/watch list`\n`/watch list all`",
+                            color: "danger",
+                            mrkdwn_in: ["text"]
                         }]
                     });
                 }
