@@ -29,6 +29,30 @@ var add = function(webpage, callback) {
 };
 
 
+var setTimeout = function(name, timeout, callback) {
+    WebpageService.setTimeout(name, timeout, function(updated, msg) {
+        var message;
+        if (!updated) {
+            message = {
+                response_type: "ephemeral",
+                text: "Error al modificar el intervalo de la página web.",
+                attachments: [{
+                    text: msg,
+                    color: "danger"
+                }]
+            };
+            return callback(message);
+        } else {
+            message = {
+                response_type: "in_channel",
+                text: msg
+            };
+            callback(message);
+        }
+    });
+};
+
+
 var remove = function(removeName, callback) {
     WebpageService.remove(removeName, function(removed, msg) {
         var message;
@@ -172,6 +196,7 @@ function formatNumber(number) {
 
 module.exports = {
     add: add,
+    setTimeout: setTimeout,
     remove: remove,
     getAllWebpages: getAllWebpages,
     getWebpages: getWebpages

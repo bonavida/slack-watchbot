@@ -22,7 +22,13 @@ var data = function(req, res) {
         case "help":
             res.json({
                 response_type: "ephemeral",
-                text:"Esto es una línea.\nY ésta es otra."
+                text: "*Estos son los comandos que puedes usar:*\n" +
+                      "`/watch add <nombre_sitio> <url_sitio>` Vigila una página web.\n" +
+                      "`/watch timeout <nombre_sitio> <intervalo_en_minutos>` Modifica el intervalo de vigilancia de una página web.\n" +
+                      "`/watch remove <nombre_sitio>` Deja de vigilar una página web.\n" +
+                      "`/watch list` Lista las páginas web registradas por el usuario que introduce el comando.\n" +
+                      "`/watch list all` Lista todas las páginas web registradas.",
+                mrkdwn: true
             });
             break;
 
@@ -55,11 +61,11 @@ var data = function(req, res) {
                     });
                 } else {
 
-                    var name = text.join(" "); // Une las cadenas con un espacio en blanco para formar el nombre de la página web
+                    var addName = text.join(" "); // Une las cadenas con un espacio en blanco para formar el nombre de la página web
 
                     /** Encapsula los datos que se quiere guardar */
                     var webpage = {
-                        name: name,
+                        name: addName,
                         url: url,
                         user: req.body.user_name,
                         channel: req.body.channel_name
@@ -73,6 +79,44 @@ var data = function(req, res) {
             }
 
             break;
+
+
+        case "timeout":
+            if (text.length < 2) {
+                res.json({
+                    response_type: "ephemeral",
+                    text: "Error al modificar el intervalo de vigilancia de una página web.",
+                    attachments: [{
+                        text: "Número de parámetros incorrecto.\n/watch timeout <nombre_sitio> <intervalo_en_minutos>",
+                        color: "danger"
+                    }]
+                });
+            } else {
+
+                var timeout = text.pop(); // El intervalo es el último parámetro
+
+                /** Comprueba si el intervalo es un número mayor que 0 a través de una expresión regular */
+                if (!timeout.match(/^[1-9]\d*/)) {
+                    res.json({
+                        response_type: "ephemeral",
+                        text: "Error al modificar el intervalo de vigilancia de una página web.",
+                        attachments: [{
+                            text: "El intervalo (en minutos) ha de ser un número mayor que 0.\n",
+                            color: "danger"
+                        }]
+                    });
+                } else {
+
+                    var name = text.join(" "); // Une las cadenas con un espacio en blanco para formar el nombre de la página web
+
+                    /** Modifica el intervalo de la página web en la base de datos y envía el mensaje a Slack */
+                    slackMessage.setTimeout(name, timeout, function(msg) {
+                        res.json(msg);
+                    });
+                }
+            }
+            break;
+
 
         case "remove":
             /** Comprueba si el número de parámetros es correcto */

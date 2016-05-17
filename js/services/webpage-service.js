@@ -1,5 +1,6 @@
 var Webpage = require('../models/webpage');
 
+
 /**
  * Método para guardar una página web en la base de datos
  */
@@ -17,6 +18,27 @@ var add = function(wp, callback) {
             return callback(err, "El nombre o la URL ya están registrados.");
         }
         callback(null, "Página web añadida con éxito.");
+    });
+};
+
+
+/**
+ * Método para actualizar el intervalo de una página web a través del
+ * campo 'name' (nombre de la página web)
+ */
+var setTimeout = function(name, timeout, callback) {
+    /** Busca un objeto en la base de datos con ese nombre (campo único) */
+    Webpage.findOne({name : name}, function(err, webpage) {
+        if (!webpage) {  // Si no lo ha encontrado
+            return callback(false, "La página web con nombre \"" + name + "\" no está registrada.");
+        }
+        webpage.timeout = timeout;
+        webpage.save(function(err) {  // Si lo ha encontrado, actualiza el objeto
+            if (err) {
+                return callback(false, "Ha habido un error. Inténtelo de nuevo.");
+            }
+            callback(true, "Intervalo modificado con éxito.");
+        });
     });
 };
 
@@ -70,6 +92,7 @@ var getWebpages = function(userName, callback) {
 
 module.exports = {
   add: add,
+  setTimeout: setTimeout,
   remove: remove,
   getAllWebpages: getAllWebpages,
   getWebpages: getWebpages
