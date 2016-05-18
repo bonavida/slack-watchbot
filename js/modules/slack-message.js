@@ -178,14 +178,12 @@ function listToString(webpages, isAll, isLog) {
 
 /** Método privado que convierte una fecha en una cadena de texto */
 function getFormatedDate(date) {
-    var dayAdded = getFormatedNumber(date.getDate());
-    var monthAdded = getFormatedNumber(date.getMonth() + 1);  // El mes va del 0 al 11
-    var yearAdded = date.getFullYear();
-    var hourAdded = getFormatedNumber(date.getHours()) + ":" + getFormatedNumber(date.getMinutes());
+    var dayAdded = getFormatedNumber(date.getDate()),
+        monthAdded = getFormatedNumber(date.getMonth() + 1),  // El mes va del 0 al 11
+        yearAdded = date.getFullYear(),
+        hourAdded = getFormatedNumber(date.getHours()) + ":" + getFormatedNumber(date.getMinutes());
 
-    var msg = dayAdded + "/" + monthAdded + "/" + yearAdded + " a las " + hourAdded;
-
-    return msg;
+    return(dayAdded + "/" + monthAdded + "/" + yearAdded + " a las " + hourAdded);
 }
 
 /** Método privado que rellena un número con ceros para que tenga dos dígitos */

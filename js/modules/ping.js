@@ -1,7 +1,8 @@
-var request = require('request');
-var statusCodes = require('http').STATUS_CODES;
-var dotenv   = require('dotenv');
-var slackAPI = require('node-slack');
+var request        = require('request');
+var statusCodes    = require('http').STATUS_CODES;
+var dotenv         = require('dotenv');
+var slackAPI       = require('node-slack');
+var WebpageService = require('../services/ping-service');
 
 
 /** Carga variables de entorno desde un fichero .env al process.env */
@@ -36,7 +37,7 @@ function Ping (opts) {
 
 Ping.prototype = {
 
-    init: function (opts) {
+    init: function(opts) {
         var self = this;
 
         self.url = opts.url;
@@ -49,11 +50,11 @@ Ping.prototype = {
 
 
 
-    start: function () {
+    start: function() {
         var self = this;
 
         // Crea un intervalo para el ping
-        self.handle = setInterval(function () {
+        self.handle = setInterval(function() {
             self.ping();
         }, self.timeout);
     },
@@ -67,8 +68,9 @@ Ping.prototype = {
 
 
 
-    ping: function () {
-        var self = this, currentTime = Date.now();
+    ping: function() {
+        var self = this,
+            currentTime = Date.now();
 
         try {
             // Realiza una llamada
@@ -96,13 +98,13 @@ Ping.prototype = {
 
 
 
-    isOk: function () {
+    isOk: function() {
         this.log('UP', 'OK');
     },
 
 
 
-    isNotOk: function (statusCode) {
+    isNotOk: function(statusCode) {
         var date =  Date.now(),
             self = this,
             time = self.getFormatedDate(date),
@@ -116,7 +118,7 @@ Ping.prototype = {
 
 
 
-    log: function (status, msg) {
+    log: function(status, msg) {
         var self = this,
             time = Date.now(),
             output = '';
