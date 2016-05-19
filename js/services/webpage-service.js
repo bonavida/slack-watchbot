@@ -10,7 +10,8 @@ var add = function(wp, callback) {
         name : wp.name,
         url  : wp.url,
         user : wp.user,
-        channel: wp.channel
+        channel: wp.channel,
+        dateAdded: new Date()
     });
     /** Guarda la instancia en la base de datos */
     webpage.save(function(err) {
@@ -53,12 +54,11 @@ var remove = function(removeName, callback) {
         if (!webpage) {  // Si no lo ha encontrado
             return callback(false, "La página web con nombre \"" + removeName + "\" no está registrada.");
         }
-        var url = webpage.url;
         webpage.remove(function(err) {  // Si lo ha encontrado, elimina el objeto
             if (err) {
-                return callback(false, null, "Ha habido un error. Inténtelo de nuevo.");
+                return callback(false, "Ha habido un error. Inténtelo de nuevo.");
             }
-            callback(true, url, "Página web eliminada con éxito.");
+            callback(true, "Página web eliminada con éxito.");
         });
     });
 };
@@ -82,7 +82,7 @@ var getAllWebpages = function(callback) {
  * registradas en la base de datos que ha añadido dicho usuario
  */
 var getWebpages = function(userName, callback) {
-    Webpage.find({user: userName}, function(err, webpages) {
+    Webpage.find({user: userName}).sort('dateAdded').exec(function(err, webpages) {
         if (err) {
             return callback(err, webpages);
         }

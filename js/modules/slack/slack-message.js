@@ -56,7 +56,7 @@ var setTimeout = function(name, timeout, callback) {
 
 
 var remove = function(removeName, callback) {
-    WebpageService.remove(removeName, function(removed, url, msg) {
+    WebpageService.remove(removeName, function(removed, msg) {
         var message;
         if (!removed) {
             message = {
