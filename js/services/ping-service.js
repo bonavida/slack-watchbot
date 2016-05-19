@@ -9,10 +9,17 @@ var setPing = function(url, responseTime, callback) {
         if (!webpage) {  // Si no lo ha encontrado
             return callback(false, "La página web con url " + url + " no está registrada.");
         }
-        var totalResponseTime = webpage.averageResponseTime * webpage.numPings;
-        var newAverageResponseTime = (totalResponseTime + responseTime) / (numPings + 1);
+        var totalResponseTime;
+        var newAverageResponseTime;
+        if (webpage.numPings > 0) {
+            totalResponseTime = webpage.averageResponseTime * webpage.numPings;
+            newAverageResponseTime = (totalResponseTime + responseTime) / (webpage.numPings + 1);
+        } else {
+            totalResponseTime = 0;
+            newAverageResponseTime = responseTime;
+        }
         webpage.numPings += 1;
-        webpage.averageResponseTime = newAverageResponseTime;
+        webpage.averageResponseTime = Math.round(newAverageResponseTime * 100) / 100;
         webpage.save(function(err) {  // Si lo ha encontrado, actualiza el objeto
             if (err) {
                 return callback(false, "Ha habido un error. Inténtelo de nuevo.");

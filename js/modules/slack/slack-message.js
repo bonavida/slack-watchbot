@@ -1,5 +1,5 @@
-var WebpageService = require('../services/webpage-service');
-
+var WebpageService = require('../../services/webpage-service');
+var watchbot       = require('../ping/watchbot');
 
 var add = function(webpage, callback) {
     WebpageService.add(webpage, function(err, msg) {
@@ -15,6 +15,7 @@ var add = function(webpage, callback) {
             };
             return callback(message);
         } else {
+            watchbot.restart();
             message = {
                 response_type: "in_channel",
                 text: msg,
@@ -43,6 +44,7 @@ var setTimeout = function(name, timeout, callback) {
             };
             return callback(message);
         } else {
+            watchbot.restart();
             message = {
                 response_type: "in_channel",
                 text: msg
@@ -54,7 +56,7 @@ var setTimeout = function(name, timeout, callback) {
 
 
 var remove = function(removeName, callback) {
-    WebpageService.remove(removeName, function(removed, msg) {
+    WebpageService.remove(removeName, function(removed, url, msg) {
         var message;
         if (!removed) {
             message = {
@@ -67,6 +69,7 @@ var remove = function(removeName, callback) {
             };
             return callback(message);
         } else {
+            watchbot.restart();
             message = {
                 response_type: "in_channel",
                 text: msg

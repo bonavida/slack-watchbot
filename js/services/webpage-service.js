@@ -53,11 +53,12 @@ var remove = function(removeName, callback) {
         if (!webpage) {  // Si no lo ha encontrado
             return callback(false, "La página web con nombre \"" + removeName + "\" no está registrada.");
         }
+        var url = webpage.url;
         webpage.remove(function(err) {  // Si lo ha encontrado, elimina el objeto
             if (err) {
-                return callback(false, "Ha habido un error. Inténtelo de nuevo.");
+                return callback(false, null, "Ha habido un error. Inténtelo de nuevo.");
             }
-            callback(true, "Página web eliminada con éxito.");
+            callback(true, url, "Página web eliminada con éxito.");
         });
     });
 };

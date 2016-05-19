@@ -1,4 +1,4 @@
-var sc = require('../modules/slash-commands');
+var sc = require('../modules/slack/slash-commands');
 
 module.exports = function(router) {
 

@@ -1,8 +1,8 @@
-var request        = require('request');
-var statusCodes    = require('http').STATUS_CODES;
-var dotenv         = require('dotenv');
-var slackAPI       = require('node-slack');
-var WebpageService = require('../services/ping-service');
+var request     = require('request');
+var statusCodes = require('http').STATUS_CODES;
+var dotenv      = require('dotenv');
+var slackAPI    = require('node-slack');
+var PingService = require('../../services/ping-service');
 
 
 /** Carga variables de entorno desde un fichero .env al process.env */
@@ -24,6 +24,9 @@ function Ping (opts) {
 
     // Handler del intervalo
     this.handle = null;
+
+    // Para saber si ya se ha avisado al caerse la página web
+    this.notified = false;
 
     // Inicializa la vigilancia
     this.init(opts);
@@ -70,14 +73,15 @@ Ping.prototype = {
 
     ping: function() {
         var self = this,
-            currentTime = Date.now();
+            start = new Date();
 
         try {
             // Realiza una llamada
             request(self.url, function (error, res, body) {
                 // La página web responde
                 if (!error && res.statusCode === 200) {
-                    self.isOk();
+                    var end = new Date();
+                    self.isOk(end - start);
                 }
 
                 // La página web está caída
@@ -98,8 +102,16 @@ Ping.prototype = {
 
 
 
-    isOk: function() {
-        this.log('UP', 'OK');
+    isOk: function(responseTime) {
+        var self = this;
+
+        PingService.setPing(self.url, responseTime, function(added, msg) {
+            if (added) {
+                slack.send({text:self.url + ": " + msg});
+            } else {
+                console.log(msg);
+            }
+        });
     },
 
 
@@ -110,10 +122,21 @@ Ping.prototype = {
             time = self.getFormatedDate(date),
             msg = statusCodes[statusCode + ''];
 
-        this.log('DOWN', msg);
+        //this.log('DOWN', msg);
+
+        PingService.setIncidency(self.url, function(added, msg) {
+            if (added) {
+                slack.send({text:self.url + ": " + msg});
+            } else {
+                console.log(msg);
+            }
+        });
 
         // TODO Send message to Slack
-        // slack.send({text:"Hello"});
+        // if (!self.notified) {
+        //     slack.send({text:"Hello"});
+        //     self.notified = true;
+        // }
     },
 
 

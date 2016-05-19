@@ -3,7 +3,7 @@ var bodyParser     = require("body-parser");
 var methodOverride = require("method-override");
 var mongoose       = require('mongoose');
 var config         = require('./config/database');
-var request        = require('request');
+var watchbot       = require('./js/modules/ping/watchbot');
 var port           = process.env.PORT;
 
 var app = express();
@@ -18,27 +18,34 @@ app.use(bodyParser.json());
 app.use(methodOverride());
 
 
-/** Para crear la API Rest */
+/** Para crear una API Rest */
 var router = express.Router();
 
 router.get('/', function(req, res) {
     res.send('Watchbot is working and doing its magic.');
 });
 
-app.use(router);  //TODO: Eliminar esta linea
+/** Carga el enrutado configurado en un fichero externo
+ * y se establece /api como la raíz
+ */
 require('./js/routes/routes')(router);
 app.use('/api', router);
 
+/** Manda un statusCode de 404 cuando se pide un recurso que no existe */
 app.use(function(req, res, next) {
     res.sendStatus(404);
 });
 
+/** Manda un statusCode de 500 si ocurre algún error en el servidor */
 app.use(function(err, req, res, next) {
     console.error(err.stack);
     res.sendStatus(500);
 });
 
+/** Inicia la vigilancia */
+watchbot.init();
 
+/** Conecta con la base de datos y arranca el servidor */
 mongoose.connect(config.database, function(err, res) {
     if (err) {
         console.log('ERROR: connecting to Database. ' + err);
