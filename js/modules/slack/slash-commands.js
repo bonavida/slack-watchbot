@@ -20,10 +20,10 @@ var post = function(req, res) {
                 response_type: "ephemeral",
                 text: "*Estos son los comandos que puedes usar:*\n" +
                       "`/watch add <nombre_sitio> <url_sitio>` Vigila un sitio web (por defecto, con intervalos de 15 minutos).\n" +
-                      "`/watch timeout <nombre_sitio> <intervalo_en_minutos>` Modifica el intervalo de vigilancia de un siio web.\n" +
+                      "`/watch timeout <nombre_sitio> <intervalo_en_minutos>` Modifica el intervalo de vigilancia de un sitio web.\n" +
                       "`/watch remove <nombre_sitio>` Deja de vigilar un sitio web.\n" +
-                      "`/watch list` Lista los sitios web registradas por el usuario que introduce el comando.\n" +
-                      "`/watch list all` Lista todos los sitios web registradas.",
+                      "`/watch list` Lista los sitios web registrados por el usuario que introduce el comando.\n" +
+                      "`/watch list all` Lista todos los sitios web registrados.",
                 mrkdwn: true
             });
 
