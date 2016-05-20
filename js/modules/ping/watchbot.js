@@ -1,5 +1,5 @@
 var Ping           = require('./ping');
-var WebpageService = require('../../services/webpage-service');
+var WebsiteService = require('../../services/website-service');
 
 /** Array para guardar las urls */
 var urls = [];
@@ -7,20 +7,20 @@ var urls = [];
 var pingMap = {};
 
 
-/** Método para iniciar la vigilancia a partir de la lista de todas páginas web
- * que están registradas en la base de datos */
+/** Método para iniciar la vigilancia a partir de la lista de todos los sitios web
+ * que están registrados en la base de datos */
 var init = function() {
     pingMap = {};
     urls = [];
-    WebpageService.getAllWebpages(function (err, webpages) {
+    WebsiteService.getAllWebsites(function (err, websites) {
         if (err) {
             console.log("Ha habido un error.");
         } else {
-            for (var i = 0; i < webpages.length; i++) {
-                urls.push(webpages[i].url);
-                pingMap[webpages[i].url] = new Ping ({
-                    url: webpages[i].url,
-                    timeout: webpages[i].timeout
+            for (var i = 0; i < websites.length; i++) {
+                urls.push(websites[i].url);
+                pingMap[websites[i].url] = new Ping ({
+                    url: websites[i].url,
+                    timeout: websites[i].timeout
                 });
             }
         }
@@ -28,7 +28,7 @@ var init = function() {
 };
 
 
-/** Método para detener la vigilancia de todas las páginas web */
+/** Método para detener la vigilancia de todos los sitios web */
 var stop = function() {
     for (var i = 0; i < urls.length; i++) {
         pingMap[urls[i]].stop();

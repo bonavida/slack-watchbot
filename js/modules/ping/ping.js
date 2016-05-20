@@ -1,8 +1,9 @@
-var request     = require('request');
-var statusCodes = require('http').STATUS_CODES;
-var dotenv      = require('dotenv');
-var slackAPI    = require('node-slack');
-var PingService = require('../../services/ping-service');
+var request        = require('request');
+var statusCodes    = require('http').STATUS_CODES;
+var dotenv         = require('dotenv');
+var slackAPI       = require('node-slack');
+var PingService    = require('../../services/ping-service');
+var WebsiteService = require('../../services/website-service');
 
 
 /** Carga variables de entorno desde un fichero .env al process.env */
@@ -25,8 +26,8 @@ function Ping (opts) {
     // Handler del intervalo
     this.handle = null;
 
-    // Para saber si ya se ha avisado al caerse la página web
-    this.notified = false;
+    // Para saber si ya se ha avisado al caerse el sitio web
+    this.isDown = false;
 
     // Inicializa la vigilancia
     this.init(opts);
@@ -78,18 +79,18 @@ Ping.prototype = {
         try {
             // Realiza una llamada
             request(self.url, function (error, res, body) {
-                // La página web responde
+                // El sitio web responde
                 if (!error && res.statusCode === 200) {
                     var end = new Date();
                     self.isOk(end - start);
                 }
 
-                // La página web está caída
+                // No hay error pero el sitio web no responde
                 else if (!error) {
                     self.isNotOk(res.statusCode);
                 }
 
-                // La página web no responde
+                // El sitio web no responde
                 else {
                     self.isNotOk();
                 }
@@ -105,38 +106,33 @@ Ping.prototype = {
     isOk: function(responseTime) {
         var self = this;
 
-        PingService.setPing(self.url, responseTime, function(added, msg) {
-            if (added) {
-                slack.send({text:self.url + ": " + msg});
-            } else {
-                console.log(msg);
+        PingService.setPing(self.url, responseTime, function(err) {
+            if (err) {
+                console.log("Error: " + err);
             }
         });
+
+        if (self.isDown) {
+            self.isDown = false;
+            //TODO: Llamar a log() y avisar a Slack?
+        }
+
     },
 
 
 
     isNotOk: function(statusCode) {
-        var date =  Date.now(),
-            self = this,
-            time = self.getFormatedDate(date),
+        var self = this,
             msg = statusCodes[statusCode + ''];
 
-        //this.log('DOWN', msg);
-
-        PingService.setIncidency(self.url, function(added, msg) {
-            if (added) {
-                slack.send({text:self.url + ": " + msg});
-            } else {
-                console.log(msg);
+        PingService.setIncidency(self.url, function(err) {
+            if (err) {
+                console.log("Error: " + err);
+            } else if(!self.isDown) {
+                self.isDown = true;
+                slack.send({text:self.url + ": DOWN"});  //TODO: Llamar a log()
             }
         });
-
-        // TODO Send message to Slack
-        // if (!self.notified) {
-        //     slack.send({text:"Hello"});
-        //     self.notified = true;
-        // }
     },
 
 

@@ -1,30 +1,32 @@
-var Webpage = require('../models/webpage');
+var Website = require('../models/website');
 
 
 /**
  * Método que registra un ping, además de añadir el tiempo de respuesta a la media
  */
 var setPing = function(url, responseTime, callback) {
-    Webpage.findOne({url: url}, function(err, webpage) {
-        if (!webpage) {  // Si no lo ha encontrado
-            return callback(false, "La página web con url " + url + " no está registrada.");
+    Website.findOne({url: url}, function(err, website) {
+        if (err) {
+            return callback(err);
         }
-        var totalResponseTime;
-        var newAverageResponseTime;
-        if (webpage.numPings > 0) {
-            totalResponseTime = webpage.averageResponseTime * webpage.numPings;
-            newAverageResponseTime = (totalResponseTime + responseTime) / (webpage.numPings + 1);
+        if (!website.status || website.status === "down") {
+            website.status = "up";
+        }
+        var totalResponseTime, newAverageResponseTime;
+        if (website.numPings > 0) {
+            totalResponseTime = website.averageResponseTime * website.numPings;
+            newAverageResponseTime = (totalResponseTime + responseTime) / (website.numPings + 1);
         } else {
             totalResponseTime = 0;
             newAverageResponseTime = responseTime;
         }
-        webpage.numPings += 1;
-        webpage.averageResponseTime = Math.round(newAverageResponseTime * 100) / 100;
-        webpage.save(function(err) {  // Si lo ha encontrado, actualiza el objeto
+        website.numPings += 1;
+        website.averageResponseTime = Math.round(newAverageResponseTime * 100) / 100;
+        website.save(function(err) {  // Actualiza el objeto
             if (err) {
-                return callback(false, "Ha habido un error. Inténtelo de nuevo.");
+                return callback(err);
             }
-            callback(true, "Ping guardado con éxito.");
+            callback(null);
         });
     });
 };
@@ -34,17 +36,20 @@ var setPing = function(url, responseTime, callback) {
  * Método que registra una incidencia, además de actualizar la fecha a la actual
  */
 var setIncidency = function(url, callback) {
-    Webpage.findOne({url: url}, function(err, webpage) {
-        if (!webpage) {  // Si no lo ha encontrado
-            return callback(false, "La página web con url " + url + " no está registrada.");
+    Website.findOne({url: url}, function(err, website) {
+        if (err) {
+            return callback(err);
         }
-        webpage.numIncidencies += 1;
-        webpage.lastIncidency = new Date();
-        webpage.save(function(err) {  // Si lo ha encontrado, actualiza el objeto
+        if (!website.status || website.status === "up") {  // Mira si hay que registrar la incidencia
+            website.status = "down";
+            website.numIncidencies += 1;
+        }
+        website.lastCheckedDown = new Date();
+        website.save(function(err) {  // Actualiza el objeto
             if (err) {
-                return callback(false, "Ha habido un error. Inténtelo de nuevo.");
+                return callback(err);
             }
-            callback(true, "Incidencia guardada con éxito.");
+            callback(null);
         });
     });
 };

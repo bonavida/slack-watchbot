@@ -1,13 +1,13 @@
-var WebpageService = require('../../services/webpage-service');
+var WebsiteService = require('../../services/website-service');
 var watchbot       = require('../ping/watchbot');
 
-var add = function(webpage, callback) {
-    WebpageService.add(webpage, function(err, msg) {
+var add = function(website, callback) {
+    WebsiteService.add(website, function(err, msg) {
         var message;
         if (err) {
             message = {
                 response_type: "ephemeral",
-                text: "Error al añadir la página web.",
+                text: "Error al añadir el sitio web.",
                 attachments: [{
                     text: msg,
                     color: "danger"
@@ -20,7 +20,7 @@ var add = function(webpage, callback) {
                 response_type: "in_channel",
                 text: msg,
                 attachments: [{
-                    text: webpage.name + "\n" + webpage.url,
+                    text: website.name + "\n" + website.url,
                     color: "good"
                 }]
             };
@@ -31,12 +31,12 @@ var add = function(webpage, callback) {
 
 
 var setTimeout = function(name, timeout, callback) {
-    WebpageService.setTimeout(name, timeout, function(updated, msg) {
+    WebsiteService.setTimeout(name, timeout, function(updated, msg) {
         var message;
         if (!updated) {
             message = {
                 response_type: "ephemeral",
-                text: "Error al modificar el intervalo de la página web.",
+                text: "Error al modificar el intervalo de vigilancia del sitio web.",
                 attachments: [{
                     text: msg,
                     color: "danger"
@@ -56,12 +56,12 @@ var setTimeout = function(name, timeout, callback) {
 
 
 var remove = function(removeName, callback) {
-    WebpageService.remove(removeName, function(removed, msg) {
+    WebsiteService.remove(removeName, function(removed, msg) {
         var message;
         if (!removed) {
             message = {
                 response_type: "ephemeral",
-                text: "Error al eliminar la página web.",
+                text: "Error al eliminar el sitio web.",
                 attachments: [{
                     text: msg,
                     color: "danger"
@@ -80,13 +80,13 @@ var remove = function(removeName, callback) {
 };
 
 
-var getAllWebpages = function(callback) {
-    WebpageService.getAllWebpages(function (err, webpages) {
+var getAllWebsites = function(callback) {
+    WebsiteService.getAllWebsites(function (err, websites) {
         var message;
         if (err) {
             message = {
                 response_type: "ephemeral",
-                text: "Error al listar las páginas web.",
+                text: "Error al listar los sitios web.",
                 attachments: [{
                     text: "Ha habido un error. Inténtelo de nuevo.",
                     color: "danger"
@@ -94,17 +94,17 @@ var getAllWebpages = function(callback) {
             };
             return callback(message);
         } else {
-            if (webpages.length === 0) {
+            if (websites.length === 0) {
                 message = {
                     response_type: "ephemeral",
-                    text: "No se ha registrado ninguna página web."
+                    text: "No se ha registrado ningún sitio web."
                 };
             } else {
                 message = {
                     response_type: "in_channel",
-                    text: "Se han registrado las siguientes páginas web:",
+                    text: "Se han registrado los siguientes sitios web:",
                     attachments: [{
-                        text: listToString(webpages, true, false),
+                        text: listToString(websites, true, false),
                         color: "0080ff",
                         mrkdwn_in: ["text"]
                     }]
@@ -115,13 +115,13 @@ var getAllWebpages = function(callback) {
     });
 };
 
-var getWebpages = function(userName, callback) {
-    WebpageService.getWebpages(userName, function(err, webpages) {
+var getWebsites = function(userName, callback) {
+    WebsiteService.getWebsites(userName, function(err, websites) {
         var message;
         if (err) {
             message = {
                 response_type: "ephemeral",
-                text: "Error al listar las páginas web.",
+                text: "Error al listar los sitios web.",
                 attachments: [{
                     text: "Ha habido un error. Inténtelo de nuevo.",
                     color: "danger"
@@ -129,17 +129,17 @@ var getWebpages = function(userName, callback) {
             };
             return callback(message);
         } else {
-            if (webpages.length === 0) {
+            if (websites.length === 0) {
                 message = {
                     response_type: "ephemeral",
-                    text: "No has registrado ninguna página web."
+                    text: "No has registrado ningún sitio web."
                 };
             } else {
                 message = {
                     response_type: "in_channel",
-                    text: "Has registrado las siguientes páginas web:",
+                    text: "Has registrado los siguientes sitios web:",
                     attachments: [{
-                        text: listToString(webpages, false, false),
+                        text: listToString(websites, false, false),
                         color: "0080ff",
                         mrkdwn_in: ["text"]
                     }]
@@ -150,29 +150,29 @@ var getWebpages = function(userName, callback) {
     });
 };
 
-/** Método privado que convierte una lista de páginas web en una cadena de texto
- *  - Si isAll es true, es que se han de mostrar todas las páginas web
+/** Método privado que convierte una lista de sitios web en una cadena de texto
+ *  - Si isAll es true, es que se han de mostrar todos los sitios web
  *  - Si isLog es true, es que se han de mostrar más detalles
  */
-function listToString(webpages, isAll, isLog) {
+function listToString(websites, isAll, isLog) {
     var msg = "";
-    for (var i = 0; i < webpages.length; i++) {
-        var date = new Date(webpages[i].dateAdded);
-        msg += "*" + webpages[i].name + "*" +
-               "  " + webpages[i].url + "\n" +
+    for (var i = 0; i < websites.length; i++) {
+        var date = new Date(websites[i].dateAdded);
+        msg += "*" + websites[i].name + "*" +
+               "  " + websites[i].url + "\n" +
                "Añadido el " + getFormatedDate(date);
         if (isAll) {
-            msg += " por el usuario @" + webpages[i].user + "\n";
+            msg += " por el usuario @" + websites[i].user + "\n";
         } else {
             msg += "\n";
         }
-        msg += "Nº de veces caído: " + webpages[i].numIncidencies + "\n";
+        msg += "Nº de veces caído: " + websites[i].numIncidencies + "\n";
         if (isLog) {
-            if (webpages[i].numIncidencies !== 0) {
-                var lastIncidency = new Date(webpages[i].lastIncidency);
-                msg += "Última vez caído el " + getFormatedDate(lastIncidency);
+            if (websites[i].numIncidencies !== 0) {
+                var lastCheckedDown = new Date(websites[i].lastCheckedDown);
+                msg += "Última vez caído el " + getFormatedDate(lastCheckedDown);
             }
-            msg += "Tiempo de respuesta medio: " + webpages[i].averageResponseTime + "\n";
+            msg += "Tiempo de respuesta medio: " + websites[i].averageResponseTime + "\n";
         }
         msg += "\n";
     }
@@ -198,6 +198,6 @@ module.exports = {
     add: add,
     setTimeout: setTimeout,
     remove: remove,
-    getAllWebpages: getAllWebpages,
-    getWebpages: getWebpages
+    getAllWebsites: getAllWebsites,
+    getWebsites: getWebsites
 };

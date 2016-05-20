@@ -4,7 +4,7 @@ var slackMessage   = require('./slack-message');
 /**
  * Método para tratar un comando proveniente de una llamada HTTP Post realizada desde Slack
  */
-var data = function(req, res) {
+var post = function(req, res) {
     var text = req.body.text.split(" ");
     var option = text.shift(); // La opción es el primer parámetro
 
@@ -19,11 +19,11 @@ var data = function(req, res) {
             res.json({
                 response_type: "ephemeral",
                 text: "*Estos son los comandos que puedes usar:*\n" +
-                      "`/watch add <nombre_sitio> <url_sitio>` Vigila una página web (por defecto, con intervalos de 15 minutos).\n" +
-                      "`/watch timeout <nombre_sitio> <intervalo_en_minutos>` Modifica el intervalo de vigilancia de una página web.\n" +
-                      "`/watch remove <nombre_sitio>` Deja de vigilar una página web.\n" +
-                      "`/watch list` Lista las páginas web registradas por el usuario que introduce el comando.\n" +
-                      "`/watch list all` Lista todas las páginas web registradas.",
+                      "`/watch add <nombre_sitio> <url_sitio>` Vigila un sitio web (por defecto, con intervalos de 15 minutos).\n" +
+                      "`/watch timeout <nombre_sitio> <intervalo_en_minutos>` Modifica el intervalo de vigilancia de un siio web.\n" +
+                      "`/watch remove <nombre_sitio>` Deja de vigilar un sitio web.\n" +
+                      "`/watch list` Lista los sitios web registradas por el usuario que introduce el comando.\n" +
+                      "`/watch list all` Lista todos los sitios web registradas.",
                 mrkdwn: true
             });
 
@@ -31,14 +31,14 @@ var data = function(req, res) {
 
 
         /***********************************************************************************************************************
-           Se añade una página web desde Slack
+           Se añade un sitio web desde Slack
          ***********************************************************************************************************************/
         case "add":
 
             if (text.length < 2) {   // Comprueba si el número de parámetros es correcto
                 res.json({
                     response_type: "ephemeral",
-                    text: "Error al añadir la página web.",
+                    text: "Error al añadir el sitio web.",
                     attachments: [{
                         text: "Número de parámetros incorrecto.\n`/watch add <nombre_sitio> <url_sitio>`",
                         color: "danger",
@@ -53,9 +53,9 @@ var data = function(req, res) {
                 if (!url.match(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/)) {
                     res.json({
                         response_type: "ephemeral",
-                        text: "Error al añadir la página web.",
+                        text: "Error al añadir el sitio web.",
                         attachments: [{
-                            text: "La URL de la página web ha de tener un formato válido.\n" +
+                            text: "La URL del sitio web ha de tener un formato válido.\n" +
                                   "```http://ejemplo.com\nhttp://wwww.ejemplo.com\n" +
                                   "http://ejemplo.com/ejemplo.html?q=ejemplo\nhttps://ejemplo.com```",
                             color: "danger",
@@ -64,10 +64,10 @@ var data = function(req, res) {
                     });
                 } else {
 
-                    var addName = text.join(" "); // Une las cadenas con un espacio en blanco para formar el nombre de la página web
+                    var addName = text.join(" "); // Une las cadenas con un espacio en blanco para formar el nombre del sitio web
 
                     /** Encapsula los datos que se quiere guardar */
-                    var webpage = {
+                    var website = {
                         name: addName,
                         url: url,
                         user: req.body.user_name,
@@ -75,7 +75,7 @@ var data = function(req, res) {
                     };
 
                     /** Guarda los datos en la base de datos y envía el mensaje a Slack */
-                    slackMessage.add(webpage, function(msg) {
+                    slackMessage.add(website, function(msg) {
                         res.json(msg);
                     });
                 }
@@ -85,14 +85,14 @@ var data = function(req, res) {
 
 
         /***********************************************************************************************************************
-           Se modifica el intervalo de vigilancia de una página web desde Slack
+           Se modifica el intervalo de vigilancia de un sitio web desde Slack
          ***********************************************************************************************************************/
         case "timeout":
 
             if (text.length < 2) {   // Comprueba si el número de parámetros es correcto
                 res.json({
                     response_type: "ephemeral",
-                    text: "Error al modificar el intervalo de vigilancia de una página web.",
+                    text: "Error al modificar el intervalo de vigilancia de un sitio web.",
                     attachments: [{
                         text: "Número de parámetros incorrecto.\n`/watch timeout <nombre_sitio> <intervalo_en_minutos>`",
                         color: "danger",
@@ -107,7 +107,7 @@ var data = function(req, res) {
                 if (!timeout.match(/^[1-9]\d*/)) {
                     res.json({
                         response_type: "ephemeral",
-                        text: "Error al modificar el intervalo de vigilancia de una página web.",
+                        text: "Error al modificar el intervalo de vigilancia de un sitio web.",
                         attachments: [{
                             text: "El intervalo (en minutos) ha de ser un número mayor que 0.\n",
                             color: "danger"
@@ -115,9 +115,9 @@ var data = function(req, res) {
                     });
                 } else {
 
-                    var name = text.join(" ");  // Une las cadenas con un espacio en blanco para formar el nombre de la página web
+                    var name = text.join(" ");  // Une las cadenas con un espacio en blanco para formar el nombre del sitio web
 
-                    /** Modifica el intervalo de la página web en la base de datos y envía el mensaje a Slack */
+                    /** Modifica el intervalo de vigilancia del sitio web en la base de datos y envía el mensaje a Slack */
                     slackMessage.setTimeout(name, timeout, function(msg) {
                         res.json(msg);
                     });
@@ -128,14 +128,14 @@ var data = function(req, res) {
 
 
         /***********************************************************************************************************************
-           Se elimina una página web desde Slack
+           Se elimina un sitio web desde Slack
          ***********************************************************************************************************************/
         case "remove":
 
             if (text.length === 0) {   // Comprueba si el número de parámetros es correcto
                 res.json({
                     response_type: "ephemeral",
-                    text: "Error al eliminar la página web.",
+                    text: "Error al eliminar el sitio web.",
                     attachments: [{
                         text: "Número de parámetros incorrecto.\n`/watch remove <nombre_sitio>`",
                         color: "danger",
@@ -144,9 +144,9 @@ var data = function(req, res) {
                 });
             } else {
 
-                var removeName = text.join(" ");  // Nombre de la página web a borrar
+                var removeName = text.join(" ");  // Nombre del sitio web a borrar
 
-                /** Elimina la página web de la base de datos y envía un mensaje a Slack */
+                /** Elimina el sitio web de la base de datos y envía un mensaje a Slack */
                 slackMessage.remove(removeName, function(msg) {
                     res.json(msg);
                 });
@@ -157,14 +157,14 @@ var data = function(req, res) {
 
 
         /***********************************************************************************************************************
-           Lista páginas web en Slack
+           Lista sitios web en Slack
          ***********************************************************************************************************************/
         case "list":
 
             if (text.length > 1) {   // Comprueba si el número de parámetros es correcto
                 res.json({
                     response_type: "ephemeral",
-                    text: "Error al listar las páginas web.",
+                    text: "Error al listar los sitios web.",
                     attachments: [{
                         text: "Número de parámetros incorrecto. Por favor, usa los siguientes comandos:\n" +
                               "`/watch list`\n`/watch list all`",
@@ -172,21 +172,21 @@ var data = function(req, res) {
                         mrkdwn_in: ["text"]
                     }]
                 });
-            } else if (text.length === 0) {   // Lista las páginas web registradas por el usuario que escribe el comando
+            } else if (text.length === 0) {   // Lista los sitios web registradas por el usuario que escribe el comando
                 var userName = req.body.user_name;
 
-                slackMessage.getWebpages(userName, function(msg) {
+                slackMessage.getWebsites(userName, function(msg) {
                     res.json(msg);
                 });
-            } else {   // Lista todas las páginas web
+            } else {   // Lista todos los sitios web
                 if (text[0] === "all") {   // Comando válido
-                    slackMessage.getAllWebpages(function(msg) {
+                    slackMessage.getAllWebsites(function(msg) {
                         res.json(msg);
                     });
                 } else {   // Comando no válido
                     res.json({
                         response_type: "ephemeral",
-                        text: "Error al listar las páginas web.",
+                        text: "Error al listar los sitios web",
                         attachments: [{
                             text: "Comando no identificado. Por favor, usa los siguientes comandos:\n" +
                                   "`/watch list`\n`/watch list all`",
@@ -218,5 +218,5 @@ var data = function(req, res) {
 
 
 module.exports = {
-    data: data
+    post: post
 };
