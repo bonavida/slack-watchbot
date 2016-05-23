@@ -3,7 +3,7 @@ var bodyParser     = require("body-parser");
 var methodOverride = require("method-override");
 var mongoose       = require('mongoose');
 var config         = require('./config/database');
-var watchbot       = require('./js/modules/ping/watchbot');
+var watchbot       = require('./lib/modules/ping/watchbot');
 var port           = process.env.PORT;
 
 var app = express();
@@ -25,10 +25,10 @@ router.get('/', function(req, res) {
     res.send('Watchbot is working and doing its magic.');
 });
 
-/** Carga el enrutado configurado en un fichero externo
- * y se establece /api como la raíz
+/**
+ * Carga el enrutado configurado en un fichero externo y se establece /api como la raíz
  */
-require('./js/routes/routes')(router);
+require('./lib/routes/routes')(router);
 app.use('/api', router);
 
 /** Manda un statusCode de 404 cuando se pide un recurso que no existe */
