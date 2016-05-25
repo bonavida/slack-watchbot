@@ -3,7 +3,7 @@ var bodyParser     = require("body-parser");
 var methodOverride = require("method-override");
 var mongoose       = require('mongoose');
 var config         = require('./config/database');
-var watchbot       = require('./lib/modules/ping/watchbot');
+var watchbot       = require('./lib/modules/watchbot/watchbot');
 var port           = process.env.PORT;
 
 var app = express();
