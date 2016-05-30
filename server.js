@@ -42,8 +42,16 @@ app.use(function(err, req, res, next) {
     res.sendStatus(500);
 });
 
+
 /** Inicia la vigilancia */
-watchbot.init();
+watchbot.init(function(err) {
+    if (err) {
+        console.log("Error: " + err);
+    } else {
+        console.log("Vigilancia iniciada.");
+    }
+});
+
 
 /** Conecta con la base de datos y arranca el servidor */
 mongoose.connect(config.database, function(err, res) {
