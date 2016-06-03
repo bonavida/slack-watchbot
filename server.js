@@ -4,6 +4,7 @@ var methodOverride = require("method-override");
 var mongoose       = require('mongoose');
 var config         = require('./config/database');
 var watchbot       = require('./lib/modules/watchbot/watchbot');
+var cron           = require('./lib/modules/watchbot/cron');
 var port           = process.env.PORT;
 
 var app = express();
@@ -49,6 +50,15 @@ watchbot.init(function(err) {
         console.log("Error: " + err);
     } else {
         console.log("Vigilancia iniciada.");
+    }
+});
+
+/** Inicia las tareas para el log diario de los usuarios de Slack */
+cron.init(function(err) {
+    if (err) {
+        console.log("Error: " + err);
+    } else {
+        console.log("Tareas cron programadas satisfactoriamente.");
     }
 });
 
