@@ -1,6 +1,5 @@
 var express        = require('express');
 var bodyParser     = require("body-parser");
-var methodOverride = require("method-override");
 var mongoose       = require('mongoose');
 var config         = require('./config/database');
 var watchbot       = require('./lib/modules/watchbot/watchbot');
@@ -14,12 +13,7 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended : false }));
 app.use(bodyParser.json());
 
-
-/** Para implementar y personalizar metodos HTTP */
-app.use(methodOverride());
-
-
-/** Para crear una API Rest */
+/** Para definir el enrutado */
 var router = express.Router();
 
 router.get('/', function(req, res) {
@@ -49,7 +43,7 @@ watchbot.init(function(err) {
     if (err) {
         console.log("Error: " + err);
     } else {
-        console.log("Vigilancia iniciada.");
+        console.log("Monitoring running.");
     }
 });
 
@@ -58,7 +52,7 @@ cron.init(function(err) {
     if (err) {
         console.log("Error: " + err);
     } else {
-        console.log("Tareas cron programadas satisfactoriamente.");
+        console.log("Cron tasks started.");
     }
 });
 
